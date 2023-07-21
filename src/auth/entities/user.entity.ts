@@ -1,14 +1,16 @@
+import { Tournament } from 'src/tournaments/entities/tournament.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   id: string;
 
   @Column('text', { unique: true })
@@ -25,6 +27,9 @@ export class User {
 
   @Column('text', { array: true, default: ['user'] })
   roles: string[];
+
+  @OneToMany(() => Tournament, (t) => t.admin)
+  tournaments: Tournament;
 
   @BeforeInsert()
   emailToLowerCaseInsert() {

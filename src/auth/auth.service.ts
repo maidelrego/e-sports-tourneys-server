@@ -22,7 +22,7 @@ export class AuthService {
   ) {}
 
   getUsers() {
-    return this.userRepository.find();
+    return this.userRepository.find({ relations: { tournaments: true } });
   }
 
   async create(createUserDto: CreateUserDto) {
