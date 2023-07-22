@@ -4,24 +4,24 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { CreateTeamDto } from './dto/create-team.dto';
-import { UpdateTeamDto } from './dto/update-team.dto';
-import { Team } from './entities/team.entity';
+import { CreateGameDto } from './dto/create-game.dto';
+import { UpdateGameDto } from './dto/update-game.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Game } from './entities/game.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class TeamsService {
+export class GamesService {
   private readonly logger = new Logger('TeamsService');
   constructor(
-    @InjectRepository(Team)
-    private readonly teamRepository: Repository<Team>,
+    @InjectRepository(Game)
+    private readonly gameRepository: Repository<Game>,
   ) {}
 
-  async create(createTeamDto: CreateTeamDto) {
+  create(createGameDto: CreateGameDto) {
     try {
-      const team = this.teamRepository.create(createTeamDto);
-      return await this.teamRepository.save(team);
+      const game = this.gameRepository.create(createGameDto);
+      return this.gameRepository.save(game);
     } catch (error) {
       this.handleDatabaseExceptions(error);
     }
@@ -29,22 +29,22 @@ export class TeamsService {
 
   findAll() {
     try {
-      return this.teamRepository.find();
+      return this.gameRepository.find();
     } catch (error) {
       this.handleDatabaseExceptions(error);
     }
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} team`;
+    return `This action returns a #${id} game`;
   }
 
-  update(id: number, updateTeamDto: UpdateTeamDto) {
-    return `This action updates a #${id} team`;
+  update(id: number, updateGameDto: UpdateGameDto) {
+    return `This action updates a #${id} game`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} team`;
+    return `This action removes a #${id} game`;
   }
 
   private handleDatabaseExceptions(error: any) {
