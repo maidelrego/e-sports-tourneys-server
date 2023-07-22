@@ -1,10 +1,12 @@
 import { User } from 'src/auth/entities/user.entity';
+import { Team } from 'src/teams/entities/team.entity';
 import {
   BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -30,8 +32,11 @@ export class Tournament {
   @Column({ unique: true, nullable: true })
   uniqueId: string;
 
-  @ManyToOne(() => User, (user) => user.tournaments, { eager: true })
+  @ManyToOne(() => User, (user) => user.tournaments)
   admin: User;
+
+  @OneToMany(() => Team, (t) => t.tournamentId, { eager: true })
+  teams: Team;
 
   @CreateDateColumn({
     type: 'timestamp',
