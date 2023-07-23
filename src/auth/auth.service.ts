@@ -51,7 +51,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true, id: true, fullName: true },
+      select: { email: true, id: true, fullName: true },
     });
 
     if (!user) throw new UnauthorizedException('Invalid credentials(Email)');

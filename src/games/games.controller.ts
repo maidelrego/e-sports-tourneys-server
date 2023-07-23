@@ -25,6 +25,11 @@ export class GamesController {
     return this.gamesService.findAll();
   }
 
+  @Get('teamId/:teamId')
+  findAllByTeam(@Param('teamId') teamId: number) {
+    return this.gamesService.findByTeam(teamId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.gamesService.findOne(+id);

@@ -10,7 +10,8 @@ import {
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
-import { Auth } from 'src/auth/decorators';
+import { Auth, GetUser } from 'src/auth/decorators';
+import { User } from 'src/auth/entities/user.entity';
 
 @Controller('tournaments')
 export class TournamentsController {
@@ -26,6 +27,12 @@ export class TournamentsController {
   @Auth()
   findAll() {
     return this.tournamentsService.findAll();
+  }
+
+  @Get('byAdminId')
+  @Auth()
+  getTournamentsByAdminId(@GetUser() user: User) {
+    return this.tournamentsService.findAllWithAdmin(user);
   }
 
   @Get(':id')

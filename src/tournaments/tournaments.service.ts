@@ -9,6 +9,7 @@ import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { Repository } from 'typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class TournamentsService {
@@ -30,6 +31,12 @@ export class TournamentsService {
 
   findAll() {
     return `This action returns all tournaments`;
+  }
+
+  findAllWithAdmin(user: User) {
+    return this.tournamentRepository.find({
+      where: { admin: { id: user.id } },
+    });
   }
 
   findOne(id: number) {

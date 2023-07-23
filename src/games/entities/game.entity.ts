@@ -1,12 +1,7 @@
-import { Team } from 'src/teams/entities/team.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -15,11 +10,11 @@ export class Game {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => Team, (t) => t.id)
-  team1: Team;
+  @Column()
+  team1: number;
 
-  @ManyToOne(() => Team, (t) => t.id)
-  team2: Team;
+  @Column()
+  team2: number;
 
   @Column({ default: 0 })
   score1: number;

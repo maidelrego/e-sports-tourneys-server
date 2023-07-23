@@ -35,6 +35,16 @@ export class GamesService {
     }
   }
 
+  findByTeam(teamId: number) {
+    try {
+      return this.gameRepository.find({
+        where: [{ team1: teamId }, { team2: teamId }],
+      });
+    } catch (error) {
+      this.handleDatabaseExceptions(error);
+    }
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} game`;
   }
