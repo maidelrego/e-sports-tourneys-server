@@ -1,5 +1,5 @@
-import { IsString, MinLength, IsNumber } from 'class-validator';
-import { User } from 'src/auth/entities/user.entity';
+import { IsString, MinLength, IsNumber, IsArray } from 'class-validator';
+import { IRequestTeam } from 'src/teams/interfaces/team.interface';
 
 export class CreateTournamentDto {
   @IsString()
@@ -13,5 +13,8 @@ export class CreateTournamentDto {
   sport: number;
 
   @IsNumber()
-  admin: User;
+  games: number;
+
+  @IsArray()
+  teams: IRequestTeam[];
 }

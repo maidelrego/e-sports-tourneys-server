@@ -36,7 +36,7 @@ export class Tournament {
   admin: User;
 
   @OneToMany(() => Team, (t) => t.tournamentId, { eager: true })
-  teams: Team;
+  teams: Team[];
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -6,10 +6,12 @@ import {
 } from '@nestjs/common';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
+import { Team } from 'src/teams/entities/team.entity';
+import { Game } from 'src/games/entities/game.entity';
 
 @Injectable()
 export class TournamentsService {
@@ -17,14 +19,51 @@ export class TournamentsService {
   constructor(
     @InjectRepository(Tournament)
     private readonly tournamentRepository: Repository<Tournament>,
+    @InjectRepository(Team)
+    private readonly teamRepository: Repository<Team>,
+    @InjectRepository(Game)
+    private readonly gameRepository: Repository<Game>,
+    private readonly dataSource: DataSource,
   ) {}
 
-  async create(createTournamentDto: CreateTournamentDto) {
+  async create(createTournamentDto: CreateTournamentDto, user: User) {
+    const { teams, ...rest } = createTournamentDto;
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    let teamsEntities: Team[] = [];
+
     try {
-      const tournament = this.tournamentRepository.create(createTournamentDto);
-      // console.log(tournament);
-      return await this.tournamentRepository.save(tournament);
+      // Create a tournament
+      const tournament = new Tournament();
+      tournament.name = rest.name;
+      tournament.type = rest.type;
+      tournament.sport = rest.sport;
+      tournament.admin = user;
+      await queryRunner.manager.save(tournament);
+
+      // Create teams
+      for (const item of teams) {
+        const team = new Team();
+        team.teamName = item.team;
+        team.userName = item.playerName;
+        team.tournamentId = tournament;
+        teamsEntities.push(team);
+      }
+      teamsEntities = await queryRunner.manager.save(teamsEntities);
+
+      const games = this.generateGroupPhaseGames(teamsEntities);
+      // Create Games
+      for (const item of games) {
+        await queryRunner.manager.save(item);
+      }
+
+      await queryRunner.commitTransaction(); // commit saves
+      await queryRunner.release(); // exit query runner
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       this.handleDatabaseExceptions(error);
     }
   }
@@ -57,5 +96,27 @@ export class TournamentsService {
     }
     this.logger.error(error);
     throw new InternalServerErrorException('Unexpected error, check server');
+  }
+
+  private generateGroupPhaseGames(teams: Team[]) {
+    const games: Game[] = [];
+
+    // Loop through each team and create matches against other teams
+    for (let i = 0; i < teams.length; i++) {
+      for (let j = i + 1; j < teams.length; j++) {
+        const homeGame = new Game();
+        homeGame.team1 = teams[i].id;
+        homeGame.team2 = teams[j].id;
+
+        const awayGame = new Game();
+        awayGame.team1 = teams[j].id;
+        awayGame.team2 = teams[i].id;
+
+        games.push(homeGame);
+        games.push(awayGame);
+      }
+    }
+
+    return games;
   }
 }

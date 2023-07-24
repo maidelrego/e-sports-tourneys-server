@@ -19,8 +19,11 @@ export class TournamentsController {
 
   @Post()
   @Auth()
-  create(@Body() createTournamentDto: CreateTournamentDto) {
-    return this.tournamentsService.create(createTournamentDto);
+  create(
+    @Body() createTournamentDto: CreateTournamentDto,
+    @GetUser() user: User,
+  ) {
+    return this.tournamentsService.create(createTournamentDto, user);
   }
 
   @Get()
