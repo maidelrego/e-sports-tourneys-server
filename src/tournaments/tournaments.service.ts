@@ -19,10 +19,6 @@ export class TournamentsService {
   constructor(
     @InjectRepository(Tournament)
     private readonly tournamentRepository: Repository<Tournament>,
-    @InjectRepository(Team)
-    private readonly teamRepository: Repository<Team>,
-    @InjectRepository(Game)
-    private readonly gameRepository: Repository<Game>,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -49,9 +45,11 @@ export class TournamentsService {
         const team = new Team();
         team.teamName = item.team;
         team.userName = item.playerName;
+        team.logoUrl = item.logoUrl;
         team.tournamentId = tournament;
         teamsEntities.push(team);
       }
+
       teamsEntities = await queryRunner.manager.save(teamsEntities);
 
       const games = this.generateGroupPhaseGames(teamsEntities);
@@ -87,7 +85,7 @@ export class TournamentsService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} tournament`;
+    return this.tournamentRepository.delete(id);
   }
 
   private handleDatabaseExceptions(error: any) {

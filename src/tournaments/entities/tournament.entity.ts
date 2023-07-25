@@ -35,7 +35,10 @@ export class Tournament {
   @ManyToOne(() => User, (user) => user.tournaments)
   admin: User;
 
-  @OneToMany(() => Team, (t) => t.tournamentId, { eager: true })
+  @OneToMany(() => Team, (t) => t.tournamentId, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   teams: Team[];
 
   @CreateDateColumn({

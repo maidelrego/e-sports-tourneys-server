@@ -9,6 +9,9 @@ export class CreateTeamDto {
   @IsString()
   teamName: string;
 
+  @IsString()
+  logoUrl: string;
+
   @IsNumber()
   tournamentId: Tournament;
 }

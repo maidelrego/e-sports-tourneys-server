@@ -3,9 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
@@ -44,7 +44,7 @@ export class TournamentsController {
     return this.tournamentsService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateTournamentDto: UpdateTournamentDto,
@@ -54,6 +54,13 @@ export class TournamentsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
+    // const tournamentToDelete = this.tournamentsService.findOne(+id);
+
+    // if (!tournamentToDelete) {
+    //   throw new BadRequestException('Tournament does not exist');
+    // }
+
+    // const { teams } = tournamentToDelete
     return this.tournamentsService.remove(+id);
   }
 }

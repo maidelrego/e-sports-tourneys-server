@@ -50,7 +50,7 @@ export class GamesService {
   }
 
   update(id: number, updateGameDto: UpdateGameDto) {
-    return `This action updates a #${id} game`;
+    return this.gameRepository.update(id, updateGameDto);
   }
 
   remove(id: number) {

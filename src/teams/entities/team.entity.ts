@@ -18,7 +18,10 @@ export class Team {
   @Column()
   teamName: string;
 
-  @ManyToOne(() => Tournament, (t) => t.id)
+  @Column({ nullable: true })
+  logoUrl: string;
+
+  @ManyToOne(() => Tournament, (t) => t.id, { onDelete: 'CASCADE' })
   tournamentId: Tournament;
 
   @CreateDateColumn({
