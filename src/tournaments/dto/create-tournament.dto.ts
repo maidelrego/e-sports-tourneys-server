@@ -4,7 +4,7 @@ import { IRequestTeam } from 'src/teams/interfaces/team.interface';
 export class CreateTournamentDto {
   @IsString()
   @MinLength(1)
-  name: string;
+  tournamentName: string;
 
   @IsNumber()
   type: number;

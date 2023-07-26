@@ -18,7 +18,7 @@ export class Tournament {
   id: number;
 
   @Column()
-  name: string;
+  tournamentName: string;
 
   @Column()
   type: number;

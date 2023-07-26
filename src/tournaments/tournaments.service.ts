@@ -34,7 +34,7 @@ export class TournamentsService {
     try {
       // Create a tournament
       const tournament = new Tournament();
-      tournament.name = rest.name;
+      tournament.tournamentName = rest.tournamentName;
       tournament.type = rest.type;
       tournament.sport = rest.sport;
       tournament.admin = user;
@@ -43,7 +43,7 @@ export class TournamentsService {
       // Create teams
       for (const item of teams) {
         const team = new Team();
-        team.teamName = item.team;
+        team.teamName = item.teamName;
         team.userName = item.playerName;
         team.logoUrl = item.logoUrl;
         team.tournamentId = tournament;
@@ -60,6 +60,7 @@ export class TournamentsService {
 
       await queryRunner.commitTransaction(); // commit saves
       await queryRunner.release(); // exit query runner
+      return tournament;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.handleDatabaseExceptions(error);

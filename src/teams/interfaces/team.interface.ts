@@ -1,5 +1,5 @@
 export interface IRequestTeam {
   playerName: string;
-  team: string;
+  teamName: string;
   logoUrl: string;
 }
