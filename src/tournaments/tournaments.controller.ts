@@ -40,8 +40,8 @@ export class TournamentsController {
 
   @Get(':id')
   @Auth()
-  findOne(@Param('id') id: string) {
-    return this.tournamentsService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.tournamentsService.findOne(id);
   }
 
   @Put(':id')
@@ -54,13 +54,6 @@ export class TournamentsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    // const tournamentToDelete = this.tournamentsService.findOne(+id);
-
-    // if (!tournamentToDelete) {
-    //   throw new BadRequestException('Tournament does not exist');
-    // }
-
-    // const { teams } = tournamentToDelete
     return this.tournamentsService.remove(+id);
   }
 }
