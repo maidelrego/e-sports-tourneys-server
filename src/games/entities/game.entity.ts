@@ -12,10 +12,14 @@ export class Game {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => Team, (team) => team.gamesAsTeam1)
+  @ManyToOne(() => Team, (team) => team.gamesAsTeam1, {
+    onDelete: 'CASCADE',
+  })
   team1: Team;
 
-  @ManyToOne(() => Team, (team) => team.gamesAsTeam2)
+  @ManyToOne(() => Team, (team) => team.gamesAsTeam2, {
+    onDelete: 'CASCADE',
+  })
   team2: Team;
 
   @Column({ default: 0 })

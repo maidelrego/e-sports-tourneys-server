@@ -89,35 +89,7 @@ export class TournamentsService {
   }
 
   async remove(id: number) {
-    const tournamentToDelete = await this.findOne(id);
-    const tournamentTeams = tournamentToDelete.teams.map((team) => team.id);
-
-    const gamesToDelete = await this.dataSource
-      .getRepository(Game)
-      .createQueryBuilder('game')
-      .where('game.team1 IN (:...teams)', { teams: tournamentTeams })
-      .orWhere('game.team2 IN (:...teams)', { teams: tournamentTeams })
-      .getMany();
-
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      await queryRunner.manager.remove(gamesToDelete);
-      await queryRunner.manager.remove(tournamentToDelete);
-
-      await queryRunner.commitTransaction(); // commit saves
-
-      await queryRunner.release(); // exit query runner
-
-      return;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      this.handleDatabaseExceptions(error);
-    }
-
-    return 'Tournament deleted';
+    return this.tournamentRepository.delete(id);
   }
 
   private handleDatabaseExceptions(error: any) {

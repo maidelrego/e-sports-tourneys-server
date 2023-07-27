@@ -75,8 +75,22 @@ export class GamesService {
     return `This action returns a #${id} game`;
   }
 
-  update(id: number, updateGameDto: UpdateGameDto) {
-    return this.gameRepository.update(id, updateGameDto);
+  async update(id: number, updateGameDto: UpdateGameDto) {
+    const game = await this.gameRepository.preload({
+      id: id,
+      ...updateGameDto,
+    });
+
+    if (!game) {
+      throw new BadRequestException('Game not found');
+    }
+
+    try {
+      const updatedGame = this.gameRepository.save(game);
+      return updatedGame;
+    } catch (error) {
+      this.handleDatabaseExceptions(error);
+    }
   }
 
   remove(id: number) {

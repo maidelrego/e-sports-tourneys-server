@@ -27,11 +27,15 @@ export class Team {
   tournamentId: Tournament;
 
   // One team can have multiple games, so it's a one-to-many relationship
-  @OneToMany(() => Game, (game) => game.team1)
+  @OneToMany(() => Game, (game) => game.team1, {
+    onDelete: 'CASCADE',
+  })
   gamesAsTeam1: Game[];
 
   // One team can be in multiple games as the second team, so it's another one-to-many relationship
-  @OneToMany(() => Game, (game) => game.team2)
+  @OneToMany(() => Game, (game) => game.team2, {
+    onDelete: 'CASCADE',
+  })
   gamesAsTeam2: Game[];
 
   @CreateDateColumn({
