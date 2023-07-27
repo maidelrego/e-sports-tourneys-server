@@ -120,7 +120,39 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
 
   // Convert teamStatsMap to an array and sort by points (descending)
   const standings: TeamStats[] = Array.from(teamStatsMap.values());
-  standings.sort((a, b) => b.points - a.points);
+
+  standings.sort((a, b) => {
+    // Sort by points (descending)
+    if (a.points !== b.points) {
+      return b.points - a.points;
+    }
+
+    // Sort by goalsScored (descending) if points are tied
+    if (a.goalsScored !== b.goalsScored) {
+      return b.goalsScored - a.goalsScored;
+    }
+
+    // If points and goalsScored are tied, apply head-to-head logic
+    // Here, you can define your own logic based on head-to-head results
+    // For simplicity, let's assume a tie when the teams have the same number of wins against each other.
+    const aWinsAgainstB = a.team.gamesAsTeam1.filter(
+      (game) =>
+        (game.score1 > game.score2 && game.score2 === b.team.id) ||
+        (game.score1 === b.team.id && game.score2 > game.score1),
+    );
+    const bWinsAgainstA = b.team.gamesAsTeam1.filter(
+      (game) =>
+        (game.score1 > game.score2 && game.score2 === a.team.id) ||
+        (game.score1 === a.team.id && game.score2 > game.score1),
+    );
+
+    if (aWinsAgainstB.length !== bWinsAgainstA.length) {
+      return bWinsAgainstA.length - aWinsAgainstB.length;
+    }
+
+    // If all criteria are tied, maintain the same order
+    return 0;
+  });
 
   // delete gamesAsTeam1 and gamesAsTeam2 from each teamStats object
   for (const teamStats of standings) {
