@@ -8,7 +8,8 @@ import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game } from './entities/game.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import { Team } from 'src/teams/entities/team.entity';
 
 @Injectable()
 export class GamesService {
@@ -16,6 +17,8 @@ export class GamesService {
   constructor(
     @InjectRepository(Game)
     private readonly gameRepository: Repository<Game>,
+    @InjectRepository(Team)
+    private readonly teamRepository: Repository<Team>,
   ) {}
 
   create(createGameDto: CreateGameDto) {
@@ -34,11 +37,34 @@ export class GamesService {
       this.handleDatabaseExceptions(error);
     }
   }
+  async findGamesByTournamentId(tournamentId: number) {
+    try {
+      const teams = await this.teamRepository
+        .createQueryBuilder('team')
+        .select('team.id')
+        .where('team.tournamentId = :tournamentId', { tournamentId })
+        .getRawMany();
+
+      const teamsIds = teams.map((team) => team.team_id);
+
+      const games = await this.gameRepository.find({
+        where: [{ team1: In([...teamsIds]) }, { team2: In([...teamsIds]) }],
+        relations: ['team1', 'team2'],
+        order: {
+          id: 'ASC',
+        },
+      });
+
+      return games;
+    } catch (error) {
+      this.handleDatabaseExceptions(error);
+    }
+  }
 
   findByTeam(teamId: number) {
     try {
       return this.gameRepository.find({
-        where: [{ team1: teamId }, { team2: teamId }],
+        where: [{ team1: { id: teamId } }, { team2: { id: teamId } }],
       });
     } catch (error) {
       this.handleDatabaseExceptions(error);

@@ -1,11 +1,12 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsObject, IsOptional } from 'class-validator';
+import { Team } from 'src/teams/entities/team.entity';
 
 export class CreateGameDto {
-  @IsNumber()
-  team1: number;
+  @IsObject()
+  team1: Team;
 
-  @IsNumber()
-  team2: number;
+  @IsObject()
+  team2: Team;
 
   @IsNumber()
   @IsOptional()

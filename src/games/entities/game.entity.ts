@@ -1,7 +1,9 @@
+import { Team } from 'src/teams/entities/team.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -10,11 +12,11 @@ export class Game {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
-  team1: number;
+  @ManyToOne(() => Team, (team) => team.gamesAsTeam1)
+  team1: Team;
 
-  @Column()
-  team2: number;
+  @ManyToOne(() => Team, (team) => team.gamesAsTeam2)
+  team2: Team;
 
   @Column({ default: 0 })
   score1: number;

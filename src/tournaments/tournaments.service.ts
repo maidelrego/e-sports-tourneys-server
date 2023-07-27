@@ -104,12 +104,12 @@ export class TournamentsService {
     for (let i = 0; i < teams.length; i++) {
       for (let j = i + 1; j < teams.length; j++) {
         const homeGame = new Game();
-        homeGame.team1 = teams[i].id;
-        homeGame.team2 = teams[j].id;
+        homeGame.team1 = teams[i];
+        homeGame.team2 = teams[j];
 
         const awayGame = new Game();
-        awayGame.team1 = teams[j].id;
-        awayGame.team2 = teams[i].id;
+        awayGame.team1 = teams[j];
+        awayGame.team2 = teams[i];
 
         games.push(homeGame);
         games.push(awayGame);

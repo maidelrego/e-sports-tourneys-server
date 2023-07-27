@@ -41,7 +41,6 @@ export class AuthController {
     @RawHeaders() rawHeaders: string[],
   ) {
     // inside @GetUser() is the data in the custom decorator
-    console.log(userEmail);
     return {
       message: 'This is a private route',
       user,
