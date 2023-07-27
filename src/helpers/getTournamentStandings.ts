@@ -58,6 +58,10 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
       teamStatsMap.set(teamId, teamStats);
     }
 
+    console.log(goalsScored, goalsConceded, points);
+
+    if (goalsScored === null || goalsConceded === null) return;
+
     teamStats.gamesPlayed++;
     teamStats.goalsScored += goalsScored;
     teamStats.goalsConceded += goalsConceded;
@@ -81,6 +85,12 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
 
     for (const match of gamesAsTeam1) {
       const { score1, score2 } = match;
+
+      if (score1 === null || score2 === null) {
+        updateTeamStats(teamId, team, null, null, null);
+        continue; // Skip if match is not played (scores are null)
+      }
+
       if (score1 > score2) {
         updateTeamStats(teamId, team, score1, score2, 3); // Team 1 wins
       } else if (score1 < score2) {
@@ -92,6 +102,12 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
 
     for (const match of gamesAsTeam2) {
       const { score1, score2 } = match;
+
+      if (score1 === null || score2 === null) {
+        updateTeamStats(teamId, team, null, null, null);
+        continue;
+      }
+
       if (score1 > score2) {
         updateTeamStats(teamId, team, score2, score1, 0); // Team 2 loses
       } else if (score1 < score2) {

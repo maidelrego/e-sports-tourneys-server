@@ -22,10 +22,10 @@ export class Game {
   })
   team2: Team;
 
-  @Column({ default: 0 })
+  @Column({ nullable: true })
   score1: number;
 
-  @Column({ default: 0 })
+  @Column({ nullable: true })
   score2: number;
 
   @CreateDateColumn({
