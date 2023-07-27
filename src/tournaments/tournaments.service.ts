@@ -12,6 +12,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { Team } from 'src/teams/entities/team.entity';
 import { Game } from 'src/games/entities/game.entity';
+import {
+  TeamStats,
+  getTournamentStandings,
+} from 'src/helpers/getTournamentStandings';
 
 @Injectable()
 export class TournamentsService {
@@ -75,6 +79,19 @@ export class TournamentsService {
     return this.tournamentRepository.find({
       where: { admin: { id: user.id } },
     });
+  }
+
+  async tournamentStandings(tournamentId: number) {
+    const tournament = await this.tournamentRepository
+      .createQueryBuilder('tournament')
+      .leftJoinAndSelect('tournament.teams', 'teams')
+      .leftJoinAndSelect('teams.gamesAsTeam1', 'gamesAsTeam1')
+      .leftJoinAndSelect('teams.gamesAsTeam2', 'gamesAsTeam2')
+      .where('tournament.id = :id', { id: tournamentId })
+      .getOne();
+
+    const standings: TeamStats[] = getTournamentStandings(tournament.teams);
+    return standings;
   }
 
   findOne(id: number) {

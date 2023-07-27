@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": true
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "tourney-db",
+            "connectString": "postgres://maesabroso:OPbxeLj0g5To@ep-ancient-bush-84124044.us-east-2.aws.neon.tech/neondb"
+        }
+    ]
+}

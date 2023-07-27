@@ -38,6 +38,11 @@ export class TournamentsController {
     return this.tournamentsService.findAllWithAdmin(user);
   }
 
+  @Get('standings/:id')
+  tournamentStandings(@Param('id') id: number) {
+    return this.tournamentsService.tournamentStandings(id);
+  }
+
   @Get(':id')
   @Auth()
   findOne(@Param('id') id: number) {
