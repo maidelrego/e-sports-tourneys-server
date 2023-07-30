@@ -14,5 +14,16 @@ export class CreateGameDto {
 
   @IsNumber()
   @IsOptional()
+  tournametId?: number;
+
+  @IsNumber()
+  @IsOptional()
+  nextMatchId?: number;
+
+  @IsOptional()
+  tournamentRoundText?: string;
+
+  @IsNumber()
+  @IsOptional()
   score2?: number;
 }

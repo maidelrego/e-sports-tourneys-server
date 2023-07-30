@@ -14,19 +14,30 @@ export class Game {
 
   @ManyToOne(() => Team, (team) => team.gamesAsTeam1, {
     onDelete: 'CASCADE',
+    nullable: true,
   })
-  team1: Team;
+  team1: Team | null;
 
   @ManyToOne(() => Team, (team) => team.gamesAsTeam2, {
     onDelete: 'CASCADE',
+    nullable: true,
   })
-  team2: Team;
+  team2: Team | null;
 
   @Column({ nullable: true })
   score1: number;
 
   @Column({ nullable: true })
   score2: number;
+
+  @Column({ nullable: true })
+  tournametId: number;
+
+  @Column({ nullable: true })
+  nextMatchId: number;
+
+  @Column({ nullable: true })
+  tournamentRoundText: string;
 
   @CreateDateColumn({
     type: 'timestamp',

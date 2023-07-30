@@ -58,8 +58,6 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
       teamStatsMap.set(teamId, teamStats);
     }
 
-    console.log(goalsScored, goalsConceded, points);
-
     if (goalsScored === null || goalsConceded === null) return;
 
     teamStats.gamesPlayed++;

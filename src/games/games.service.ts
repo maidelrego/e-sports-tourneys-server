@@ -37,23 +37,33 @@ export class GamesService {
       this.handleDatabaseExceptions(error);
     }
   }
-  async findGamesByTournamentId(tournamentId: number) {
+
+  findGamesByTournamentId(tournamentId: number) {
     try {
-      const teams = await this.teamRepository
-        .createQueryBuilder('team')
-        .select('team.id')
-        .where('team.tournamentId = :tournamentId', { tournamentId })
-        .getRawMany();
+      //TODO: Old query
+      // const teams = await this.teamRepository
+      //   .createQueryBuilder('team')
+      //   .select('team.id')
+      //   .where('team.tournamentId = :tournamentId', { tournamentId })
+      //   .getRawMany();
 
-      const teamsIds = teams.map((team) => team.team_id);
+      // const teamsIds = teams.map((team) => team.team_id);
 
-      const games = await this.gameRepository.find({
-        where: [{ team1: In([...teamsIds]) }, { team2: In([...teamsIds]) }],
-        relations: ['team1', 'team2'],
-        order: {
-          id: 'ASC',
-        },
-      });
+      // const games = await this.gameRepository.find({
+      //   where: [{ team1: In([...teamsIds]) }, { team2: In([...teamsIds]) }],
+      //   relations: ['team1', 'team2'],
+      //   order: {
+      //     id: 'ASC',
+      //   },
+      // });
+
+      const games = this.gameRepository
+        .createQueryBuilder('game')
+        .leftJoinAndSelect('game.team1', 'team1')
+        .leftJoinAndSelect('game.team2', 'team2')
+        .where('game.tournametId = :tournamentId', { tournamentId })
+        .orderBy('game.id', 'DESC')
+        .getMany();
 
       return games;
     } catch (error) {
@@ -85,8 +95,26 @@ export class GamesService {
       throw new BadRequestException('Game not found');
     }
 
+    if (game.nextMatchId) {
+      const nextMatch = await this.gameRepository.preload({
+        id: game.nextMatchId,
+      });
+
+      if (!nextMatch) {
+        throw new BadRequestException('Next Match not found');
+      }
+
+      if (game.score1 > game.score2) {
+        nextMatch.team1 = game.team1;
+        await this.gameRepository.save(nextMatch);
+      } else {
+        nextMatch.team2 = game.team2;
+        await this.gameRepository.save(nextMatch);
+      }
+    }
+
     try {
-      const updatedGame = this.gameRepository.save(game);
+      const updatedGame = await this.gameRepository.save(game);
       return updatedGame;
     } catch (error) {
       this.handleDatabaseExceptions(error);
