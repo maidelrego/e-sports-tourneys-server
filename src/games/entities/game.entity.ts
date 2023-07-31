@@ -15,12 +15,14 @@ export class Game {
   @ManyToOne(() => Team, (team) => team.gamesAsTeam1, {
     onDelete: 'CASCADE',
     nullable: true,
+    eager: true,
   })
   team1: Team | null;
 
   @ManyToOne(() => Team, (team) => team.gamesAsTeam2, {
     onDelete: 'CASCADE',
     nullable: true,
+    eager: true,
   })
   team2: Team | null;
 

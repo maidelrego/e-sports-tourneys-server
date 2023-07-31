@@ -1,15 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Put,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
-import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/auth/entities/user.entity';
 
@@ -47,14 +38,6 @@ export class TournamentsController {
   @Auth()
   findOne(@Param('id') id: number) {
     return this.tournamentsService.findOne(id);
-  }
-
-  @Put(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTournamentDto: UpdateTournamentDto,
-  ) {
-    return this.tournamentsService.update(+id, updateTournamentDto);
   }
 
   @Delete(':id')

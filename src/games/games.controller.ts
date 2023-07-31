@@ -10,7 +10,6 @@ import {
 import { GamesService } from './games.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { TournamentsService } from 'src/tournaments/tournaments.service';
 
 @Controller('games')
 export class GamesController {
@@ -34,11 +33,6 @@ export class GamesController {
   @Get('tournament/:tournamentId')
   findAllByTournament(@Param('tournamentId') tournamentId: number) {
     return this.gamesService.findGamesByTournamentId(tournamentId);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.gamesService.findOne(+id);
   }
 
   @Put(':id')

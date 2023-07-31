@@ -8,7 +8,7 @@ import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game } from './entities/game.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Team } from 'src/teams/entities/team.entity';
 
 @Injectable()
@@ -81,10 +81,6 @@ export class GamesService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} game`;
-  }
-
   async update(id: number, updateGameDto: UpdateGameDto) {
     const game = await this.gameRepository.preload({
       id: id,
@@ -96,21 +92,22 @@ export class GamesService {
     }
 
     if (game.nextMatchId) {
-      const nextMatch = await this.gameRepository.preload({
-        id: game.nextMatchId,
+      const nextMatch = await this.gameRepository.findOne({
+        where: { id: game.nextMatchId },
       });
 
       if (!nextMatch) {
         throw new BadRequestException('Next Match not found');
       }
 
-      if (game.score1 > game.score2) {
-        nextMatch.team1 = game.team1;
-        await this.gameRepository.save(nextMatch);
+      const winningTeam = game.score1 > game.score2 ? game.team1 : game.team2;
+
+      if (nextMatch.team1 === null) {
+        nextMatch.team1 = winningTeam;
       } else {
-        nextMatch.team2 = game.team2;
-        await this.gameRepository.save(nextMatch);
+        nextMatch.team2 = winningTeam;
       }
+      await this.gameRepository.save(nextMatch);
     }
 
     try {
