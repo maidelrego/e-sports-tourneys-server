@@ -26,9 +26,6 @@ export class Tournament {
   @Column()
   sport: number;
 
-  // @Column()
-  // admin: number;
-
   @Column({ unique: true, nullable: true })
   uniqueId: string;
 
