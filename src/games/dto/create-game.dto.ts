@@ -14,7 +14,7 @@ export class CreateGameDto {
 
   @IsNumber()
   @IsOptional()
-  tournametId?: number;
+  tournamentId?: number;
 
   @IsNumber()
   @IsOptional()

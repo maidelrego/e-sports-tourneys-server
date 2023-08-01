@@ -33,7 +33,7 @@ export class Game {
   score2: number;
 
   @Column({ nullable: true })
-  tournametId: number;
+  tournamentId: number;
 
   @Column({ nullable: true })
   nextMatchId: number;

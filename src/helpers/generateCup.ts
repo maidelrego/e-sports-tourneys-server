@@ -5,7 +5,7 @@ import { Game } from 'src/games/entities/game.entity';
 export const generateKnockoutGames = async (
   queryRunner: QueryRunner,
   teams: Team[],
-  tournamentid: number,
+  tournamentId: number,
 ) => {
   const shuffledTeams = shuffleArray(teams);
   const numberOfTeams = teams.length;
@@ -21,7 +21,7 @@ export const generateKnockoutGames = async (
   const final: Game = new Game();
   final.nextMatchId = null;
   final.tournamentRoundText = numberOfRounds.toString();
-  final.tournametId = tournamentid;
+  final.tournamentId = tournamentId;
   const finalSaved = await queryRunner.manager.save(final);
 
   switch (numberOfRounds) {
@@ -32,7 +32,7 @@ export const generateKnockoutGames = async (
         firstHalf,
         secondHalf,
         queryRunner,
-        tournamentid,
+        tournamentId,
         '1',
       );
       break;
@@ -43,7 +43,7 @@ export const generateKnockoutGames = async (
         firstHalf,
         secondHalf,
         queryRunner,
-        tournamentid,
+        tournamentId,
         '2',
       );
 
@@ -53,7 +53,7 @@ export const generateKnockoutGames = async (
         firstHalf,
         secondHalf,
         queryRunner,
-        tournamentid,
+        tournamentId,
         '1',
       );
       break;
@@ -64,7 +64,7 @@ export const generateKnockoutGames = async (
         firstHalf,
         secondHalf,
         queryRunner,
-        tournamentid,
+        tournamentId,
         '3',
       );
 
@@ -74,7 +74,7 @@ export const generateKnockoutGames = async (
         firstHalf,
         secondHalf,
         queryRunner,
-        tournamentid,
+        tournamentId,
         '2',
       );
 
@@ -84,7 +84,7 @@ export const generateKnockoutGames = async (
         firstHalf,
         secondHalf,
         queryRunner,
-        tournamentid,
+        tournamentId,
         '1',
       );
       break;
@@ -127,7 +127,7 @@ const generateSemiFinals = async (
     game.team2 = numberOfRounds === 2 ? secondHalf[i] : null;
     game.tournamentRoundText = roundText;
     game.nextMatchId = nextMatch.id;
-    game.tournametId = tournamentId;
+    game.tournamentId = tournamentId;
     const savedGame = await queryRunner.manager.save(game);
     semiFinals.push(savedGame);
   }
@@ -152,7 +152,7 @@ const generateRoundOf8 = async (
     game.tournamentRoundText = roundText;
     game.team1 = numberOfRounds === 3 ? firstHalf[i] : null;
     game.team2 = numberOfRounds === 3 ? secondHalf[i] : null;
-    game.tournametId = tournamentId;
+    game.tournamentId = tournamentId;
     const savedGame = await queryRunner.manager.save(game);
     roundOf8.push(savedGame);
   }
@@ -175,7 +175,7 @@ const generateRoundOf16 = async (
     game.team1 = numberOfRounds === 4 ? firstHalf[i] : null;
     game.team2 = numberOfRounds === 4 ? secondHalf[i] : null;
     game.tournamentRoundText = roundText;
-    game.tournametId = tournamentId;
+    game.tournamentId = tournamentId;
     roundOf16Ref = calculateRef(i, roundOf16Ref);
     game.nextMatchId = nextMatch[roundOf16Ref].id;
     const savedGame = await queryRunner.manager.save(game);

@@ -61,7 +61,7 @@ export class GamesService {
         .createQueryBuilder('game')
         .leftJoinAndSelect('game.team1', 'team1')
         .leftJoinAndSelect('game.team2', 'team2')
-        .where('game.tournametId = :tournamentId', { tournamentId })
+        .where('game.tournamentId = :tournamentId', { tournamentId })
         .orderBy('game.id', 'DESC')
         .getMany();
 

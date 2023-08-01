@@ -5,7 +5,7 @@ import { Game } from 'src/games/entities/game.entity';
 export const generateGroupPhaseGames = async (
   queryRunner: QueryRunner,
   teams: Team[],
-  tournamentid: number,
+  tournamentId: number,
 ) => {
   const games: Game[] = [];
 
@@ -15,12 +15,12 @@ export const generateGroupPhaseGames = async (
       const homeGame = new Game();
       homeGame.team1 = teams[i];
       homeGame.team2 = teams[j];
-      homeGame.tournametId = tournamentid;
+      homeGame.tournamentId = tournamentId;
 
       const awayGame = new Game();
       awayGame.team1 = teams[j];
       awayGame.team2 = teams[i];
-      awayGame.tournametId = tournamentid;
+      awayGame.tournamentId = tournamentId;
 
       games.push(homeGame);
       games.push(awayGame);
