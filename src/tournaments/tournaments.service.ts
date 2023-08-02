@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
-import { DataSource, IsNull, Not, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
@@ -101,17 +101,20 @@ export class TournamentsService {
     });
 
     for (const tournament of tournaments) {
-      const gamesPlayed = await this.gameRepository.count({
+      const games = await this.gameRepository.find({
         where: {
           tournamentId: tournament.id,
-          score1: Not(IsNull()),
-          score2: Not(IsNull()),
         },
       });
+
+      const gamesPlayed = games.filter(
+        (game) => game.score1 !== null && game.score2 !== null,
+      ).length;
 
       structuredTournaments.push({
         ...tournament,
         gamesPlayed: gamesPlayed,
+        gamesTotal: games.length,
       });
     }
 
