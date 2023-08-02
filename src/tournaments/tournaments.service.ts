@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, IsNull, Not, Repository } from 'typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
@@ -16,6 +16,7 @@ import {
 } from 'src/helpers/getTournamentStandings';
 import { generateGroupPhaseGames } from 'src/helpers/generateLeague';
 import { generateKnockoutGames } from 'src/helpers/generateCup';
+import { Game } from 'src/games/entities/game.entity';
 
 @Injectable()
 export class TournamentsService {
@@ -23,6 +24,8 @@ export class TournamentsService {
   constructor(
     @InjectRepository(Tournament)
     private readonly tournamentRepository: Repository<Tournament>,
+    @InjectRepository(Game)
+    private readonly gameRepository: Repository<Game>,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -90,10 +93,29 @@ export class TournamentsService {
     return `This action returns all tournaments`;
   }
 
-  findAllWithAdmin(user: User) {
-    return this.tournamentRepository.find({
+  async findAllWithAdmin(user: User) {
+    const structuredTournaments = [];
+
+    const tournaments = await this.tournamentRepository.find({
       where: { admin: { id: user.id } },
     });
+
+    for (const tournament of tournaments) {
+      const gamesPlayed = await this.gameRepository.count({
+        where: {
+          tournamentId: tournament.id,
+          score1: Not(IsNull()),
+          score2: Not(IsNull()),
+        },
+      });
+
+      structuredTournaments.push({
+        ...tournament,
+        gamesPlayed: gamesPlayed,
+      });
+    }
+
+    return structuredTournaments;
   }
 
   async tournamentStandings(tournamentId: number) {
