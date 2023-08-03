@@ -123,7 +123,7 @@ export class TournamentsService {
 
     if (
       tournament.sharedAdmins.includes(userId.toString()) ||
-      tournament.guests.includes(userId.toString())
+      tournament.sharedGuests.includes(userId.toString())
     ) {
       throw new UnauthorizedException(
         'You are already part of this tournament.',
@@ -133,7 +133,7 @@ export class TournamentsService {
     if (accessType === 'sharedAdmins') {
       tournament.sharedAdmins.push(userId);
     } else if (accessType === 'guest') {
-      tournament.guests.push(userId);
+      tournament.sharedGuests.push(userId);
     }
 
     await this.tournamentRepository.save(tournament);
@@ -146,19 +146,15 @@ export class TournamentsService {
   async findAllWithAdmin(user: User) {
     const structuredTournaments = [];
 
-    const tournaments = await this.tournamentRepository.find({
-      where: [
-        {
-          admin: { id: user.id },
-        },
-        {
-          sharedAdmins: In([user.id]),
-        },
-        {
-          guests: In([user.id]),
-        },
-      ],
-    });
+    const tournaments = await this.tournamentRepository
+      .createQueryBuilder('tournament')
+      .leftJoinAndSelect('tournament.teams', 'teams')
+      .leftJoinAndSelect('teams.gamesAsTeam1', 'gamesAsTeam1')
+      .leftJoinAndSelect('teams.gamesAsTeam2', 'gamesAsTeam2')
+      .where('tournament.admin = :userId', { userId: user.id }) // User is an admin
+      .orWhere('tournament.sharedAdmins @> ARRAY[:userId]', { userId: user.id }) // User is in sharedAdmins array
+      .orWhere('tournament.sharedGuests @> ARRAY[:userId]', { userId: user.id }) // User is in sharedGuests array
+      .getMany();
 
     for (const tournament of tournaments) {
       const games = await this.gameRepository.find({
