@@ -29,7 +29,13 @@ export class Tournament {
   @Column({ unique: true, nullable: true })
   uniqueId: string;
 
-  @ManyToOne(() => User, (user) => user.tournaments)
+  @Column('simple-array', { nullable: true })
+  sharedAdmins: string[];
+
+  @Column('simple-array', { nullable: true })
+  guests: string[];
+
+  @ManyToOne(() => User, (user) => user.tournaments, { eager: true })
   admin: User;
 
   @OneToMany(() => Team, (t) => t.tournamentId, {

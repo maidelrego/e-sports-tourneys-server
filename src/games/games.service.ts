@@ -40,23 +40,6 @@ export class GamesService {
 
   findGamesByTournamentId(tournamentId: number) {
     try {
-      //TODO: Old query
-      // const teams = await this.teamRepository
-      //   .createQueryBuilder('team')
-      //   .select('team.id')
-      //   .where('team.tournamentId = :tournamentId', { tournamentId })
-      //   .getRawMany();
-
-      // const teamsIds = teams.map((team) => team.team_id);
-
-      // const games = await this.gameRepository.find({
-      //   where: [{ team1: In([...teamsIds]) }, { team2: In([...teamsIds]) }],
-      //   relations: ['team1', 'team2'],
-      //   order: {
-      //     id: 'ASC',
-      //   },
-      // });
-
       const games = this.gameRepository
         .createQueryBuilder('game')
         .leftJoinAndSelect('game.team1', 'team1')

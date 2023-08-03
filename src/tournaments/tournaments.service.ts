@@ -3,13 +3,16 @@ import {
   BadRequestException,
   InternalServerErrorException,
   Logger,
+  UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { Team } from 'src/teams/entities/team.entity';
+import { JwtService } from '@nestjs/jwt';
 import {
   TeamStats,
   getTournamentStandings,
@@ -24,6 +27,7 @@ export class TournamentsService {
   constructor(
     @InjectRepository(Tournament)
     private readonly tournamentRepository: Repository<Tournament>,
+    private readonly jwtService: JwtService,
     @InjectRepository(Game)
     private readonly gameRepository: Repository<Game>,
     private readonly dataSource: DataSource,
@@ -89,6 +93,52 @@ export class TournamentsService {
     }
   }
 
+  async generateTournamentToken(uniqueId, accessType) {
+    const payload = { uniqueId, accessType };
+    const token = this.jwtService.sign(payload);
+
+    return token;
+  }
+
+  async joinTournament(
+    uniqueId: string,
+    accessType: 'sharedAdmins' | 'guest',
+    user: User,
+  ): Promise<void> {
+    if (accessType !== 'sharedAdmins' && accessType !== 'guest')
+      throw new BadRequestException('Invalid access type.');
+
+    const { id: userId } = user;
+
+    const tournament = await this.tournamentRepository.findOne({
+      where: { uniqueId: uniqueId },
+    });
+
+    if (!tournament) {
+      throw new NotFoundException('Tournament not found.');
+    }
+
+    if (tournament.admin.id === user.id)
+      throw new UnauthorizedException('You cannot join your own tournament.');
+
+    if (
+      tournament.sharedAdmins.includes(userId.toString()) ||
+      tournament.guests.includes(userId.toString())
+    ) {
+      throw new UnauthorizedException(
+        'You are already part of this tournament.',
+      );
+    }
+
+    if (accessType === 'sharedAdmins') {
+      tournament.sharedAdmins.push(userId);
+    } else if (accessType === 'guest') {
+      tournament.guests.push(userId);
+    }
+
+    await this.tournamentRepository.save(tournament);
+  }
+
   findAll() {
     return `This action returns all tournaments`;
   }
@@ -97,7 +147,17 @@ export class TournamentsService {
     const structuredTournaments = [];
 
     const tournaments = await this.tournamentRepository.find({
-      where: { admin: { id: user.id } },
+      where: [
+        {
+          admin: { id: user.id },
+        },
+        {
+          sharedAdmins: In([user.id]),
+        },
+        {
+          guests: In([user.id]),
+        },
+      ],
     });
 
     for (const tournament of tournaments) {
@@ -151,5 +211,16 @@ export class TournamentsService {
     }
     this.logger.error(error);
     throw new InternalServerErrorException('Unexpected error, check server');
+  }
+
+  decodeTournamentToken(
+    token: string,
+  ): { uniqueId: string; accessType: 'sharedAdmins' | 'guest' } | null {
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      return decodedToken;
+    } catch (error) {
+      return null;
+    }
   }
 }
