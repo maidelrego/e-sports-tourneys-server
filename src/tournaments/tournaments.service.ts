@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
@@ -157,6 +157,8 @@ export class TournamentsService {
       .getMany();
 
     for (const tournament of tournaments) {
+      const standings: TeamStats[] = getTournamentStandings(tournament.teams);
+
       const games = await this.gameRepository.find({
         where: {
           tournamentId: tournament.id,
@@ -171,6 +173,7 @@ export class TournamentsService {
         ...tournament,
         gamesPlayed: gamesPlayed,
         gamesTotal: games.length,
+        standings: standings,
       });
     }
 
