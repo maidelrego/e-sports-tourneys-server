@@ -165,15 +165,19 @@ export class TournamentsService {
         },
       });
 
+      const gamesTotal = games.length;
       const gamesPlayed = games.filter(
         (game) => game.score1 !== null && game.score2 !== null,
       ).length;
 
       structuredTournaments.push({
         ...tournament,
-        gamesPlayed: gamesPlayed,
-        gamesTotal: games.length,
-        standings: standings,
+        gamesPlayed,
+        gamesTotal,
+        status:
+          gamesPlayed === gamesTotal
+            ? 'In progress.......'
+            : standings[0].team.userName,
       });
     }
 
