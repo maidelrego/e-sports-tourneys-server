@@ -154,6 +154,7 @@ export class TournamentsService {
       .where('tournament.admin = :userId', { userId: user.id }) // User is an admin
       .orWhere('tournament.sharedAdmins @> ARRAY[:userId]', { userId: user.id }) // User is in sharedAdmins array
       .orWhere('tournament.sharedGuests @> ARRAY[:userId]', { userId: user.id }) // User is in sharedGuests array
+      .orderBy('tournament.createdAt', 'DESC')
       .getMany();
 
     for (const tournament of tournaments) {
@@ -175,7 +176,7 @@ export class TournamentsService {
         gamesPlayed,
         gamesTotal,
         status:
-          gamesPlayed === gamesTotal
+          gamesPlayed !== gamesTotal
             ? 'In progress.......'
             : standings[0].team.userName,
       });
