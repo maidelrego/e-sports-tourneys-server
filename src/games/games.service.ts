@@ -83,11 +83,15 @@ export class GamesService {
         throw new BadRequestException('Next Match not found');
       }
 
+      if (nextMatch.score1 !== null || nextMatch.score2 !== null) {
+        throw new BadRequestException('Next Match has already been played');
+      }
+
       const winningTeam = game.score1 > game.score2 ? game.team1 : game.team2;
 
-      if (nextMatch.team1 === null) {
+      if (game.nextMatchPlace === 'home') {
         nextMatch.team1 = winningTeam;
-      } else {
+      } else if (game.nextMatchPlace === 'away') {
         nextMatch.team2 = winningTeam;
       }
       await this.gameRepository.save(nextMatch);

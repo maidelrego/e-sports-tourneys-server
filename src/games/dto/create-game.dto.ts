@@ -23,6 +23,9 @@ export class CreateGameDto {
   @IsOptional()
   tournamentRoundText?: string;
 
+  @IsOptional()
+  nextMatchPlace?: string;
+
   @IsNumber()
   @IsOptional()
   score2?: number;

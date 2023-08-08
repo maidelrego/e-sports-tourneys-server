@@ -42,6 +42,9 @@ export class Game {
   @Column({ nullable: true })
   tournamentRoundText: string;
 
+  @Column({ nullable: true })
+  nextMatchPlace: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
