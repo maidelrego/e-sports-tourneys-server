@@ -4,6 +4,12 @@ interface Match {
   score1: number;
   score2: number;
   createdAt: Date;
+  updatedAt: Date;
+}
+
+interface MatchResult {
+  value: string;
+  playedAt: Date;
 }
 
 // Step 2: Interface for a team
@@ -28,6 +34,7 @@ export interface TeamStats {
   goalsScored: number;
   goalsConceded: number;
   points: number;
+  lastFiveGameResults: Array<MatchResult>;
 }
 
 // Step 4: Function to calculate tournament standings
@@ -41,6 +48,7 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
     goalsScored: number,
     goalsConceded: number,
     points: number,
+    gameResult: MatchResult,
   ): void {
     let teamStats = teamStatsMap.get(teamId);
     if (!teamStats) {
@@ -54,6 +62,7 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
         goalsScored: 0,
         goalsConceded: 0,
         points: 0,
+        lastFiveGameResults: [],
       };
       teamStatsMap.set(teamId, teamStats);
     }
@@ -64,6 +73,7 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
     teamStats.goalsScored += goalsScored;
     teamStats.goalsConceded += goalsConceded;
     teamStats.points += points;
+    teamStats.lastFiveGameResults.push(gameResult);
 
     if (points === 3) {
       teamStats.wins++;
@@ -78,40 +88,55 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
   for (const team of teams) {
     const { id: teamId, gamesAsTeam1, gamesAsTeam2 } = team;
 
-    // Call the updateTeamStats function with the whole team object
-    // updateTeamStats(teamId, team, 0, 0, 0); // Initialize the teamStats object
-
     for (const match of gamesAsTeam1) {
-      const { score1, score2 } = match;
+      const { score1, score2, updatedAt = null } = match;
 
       if (score1 === null || score2 === null) {
-        updateTeamStats(teamId, team, null, null, null);
+        updateTeamStats(teamId, team, null, null, null, null);
         continue; // Skip if match is not played (scores are null)
       }
 
       if (score1 > score2) {
-        updateTeamStats(teamId, team, score1, score2, 3); // Team 1 wins
+        updateTeamStats(teamId, team, score1, score2, 3, {
+          value: 'W',
+          playedAt: updatedAt,
+        }); // Team 1 wins
       } else if (score1 < score2) {
-        updateTeamStats(teamId, team, score1, score2, 0); // Team 1 loses
+        updateTeamStats(teamId, team, score1, score2, 0, {
+          value: 'L',
+          playedAt: updatedAt,
+        }); // Team 1 loses
       } else {
-        updateTeamStats(teamId, team, score1, score2, 1); // Draw
+        updateTeamStats(teamId, team, score1, score2, 1, {
+          value: 'D',
+          playedAt: updatedAt,
+        }); // Draw
       }
     }
 
     for (const match of gamesAsTeam2) {
-      const { score1, score2 } = match;
+      const { score1, score2, updatedAt = null } = match;
 
       if (score1 === null || score2 === null) {
-        updateTeamStats(teamId, team, null, null, null);
+        updateTeamStats(teamId, team, null, null, null, null);
         continue;
       }
 
       if (score1 > score2) {
-        updateTeamStats(teamId, team, score2, score1, 0); // Team 2 loses
+        updateTeamStats(teamId, team, score2, score1, 0, {
+          value: 'L',
+          playedAt: updatedAt,
+        }); // Team 2 loses
       } else if (score1 < score2) {
-        updateTeamStats(teamId, team, score2, score1, 3); // Team 2 wins
+        updateTeamStats(teamId, team, score2, score1, 3, {
+          value: 'W',
+          playedAt: updatedAt,
+        }); // Team 2 wins
       } else {
-        updateTeamStats(teamId, team, score2, score1, 1); // Draw
+        updateTeamStats(teamId, team, score2, score1, 1, {
+          value: 'D',
+          playedAt: updatedAt,
+        }); // Draw
       }
     }
   }
@@ -156,6 +181,9 @@ export function getTournamentStandings(teams: Team[]): TeamStats[] {
   for (const teamStats of standings) {
     delete teamStats.team.gamesAsTeam1;
     delete teamStats.team.gamesAsTeam2;
+    teamStats.lastFiveGameResults = teamStats.lastFiveGameResults
+      .sort((a, b) => b?.playedAt?.getTime() - a?.playedAt?.getTime())
+      .slice(0, 5);
   }
 
   return standings;

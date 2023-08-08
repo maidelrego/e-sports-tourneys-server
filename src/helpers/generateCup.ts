@@ -149,6 +149,8 @@ const generateRoundOf8 = async (
     const game: Game = new Game();
     roundOf8Ref = calculateRef(i, roundOf8Ref);
     game.nextMatchId = nextMatch[roundOf8Ref].id;
+    //TODO:
+    //game.nextMatchPlace = nextMatch[roundOf8Ref].id;
     game.tournamentRoundText = roundText;
     game.team1 = numberOfRounds === 3 ? firstHalf[i] : null;
     game.team2 = numberOfRounds === 3 ? secondHalf[i] : null;
