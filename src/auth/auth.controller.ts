@@ -7,6 +7,8 @@ import { CreateUserDto, LoginUserDto } from './dto';
 import { User } from './entities/user.entity';
 import { UserRoleGuard } from './guards/user-role.guard';
 import { ValidRoles } from './interfaces';
+import { CreateGoogleUserDto } from './dto/create-google-user.dto copy';
+import { LoginGoogleUserDto } from './dto/login-google-user.dto';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -22,9 +24,19 @@ export class AuthController {
     return this.authService.create(createUserDto);
   }
 
+  @Post('register-google')
+  createGoogleUser(@Body() createGoogleUserDto: CreateGoogleUserDto) {
+    return this.authService.registerGoogle(createGoogleUserDto);
+  }
+
   @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
+  }
+
+  @Post('login-google')
+  loginGoogleUser(@Body() loginGoogleUserDto: LoginGoogleUserDto) {
+    return this.authService.loginGoogle(loginGoogleUserDto);
   }
 
   @Get('check-auth-status')

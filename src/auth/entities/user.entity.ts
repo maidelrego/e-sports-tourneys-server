@@ -16,11 +16,14 @@ export class User {
   @Column('text', { unique: true })
   email: string;
 
-  @Column('text', { select: false })
+  @Column('text', { select: false, nullable: true })
   password: string;
 
   @Column('text')
   fullName: string;
+
+  @Column('text', { nullable: true })
+  googleId: string;
 
   @Column('bool', { default: true })
   isActive: boolean;
