@@ -1,4 +1,4 @@
-import { IsNumber, IsObject, IsOptional } from 'class-validator';
+import { IsNumber, IsObject, IsOptional, Min } from 'class-validator';
 import { Team } from 'src/teams/entities/team.entity';
 
 export class CreateGameDto {
@@ -9,8 +9,14 @@ export class CreateGameDto {
   team2: Team;
 
   @IsNumber()
+  @Min(0)
   @IsOptional()
   score1?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  score2?: number;
 
   @IsNumber()
   @IsOptional()
@@ -25,8 +31,4 @@ export class CreateGameDto {
 
   @IsOptional()
   nextMatchPlace?: string;
-
-  @IsNumber()
-  @IsOptional()
-  score2?: number;
 }
