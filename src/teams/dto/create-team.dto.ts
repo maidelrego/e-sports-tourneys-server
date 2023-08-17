@@ -1,5 +1,5 @@
 import { IsString, MinLength, IsNumber } from 'class-validator';
-import { Tournament } from 'src/tournaments/entities/tournament.entity';
+import { Tournament } from '../../tournaments/entities/tournament.entity';
 
 export class CreateTeamDto {
   @IsString()

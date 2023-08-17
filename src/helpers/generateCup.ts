@@ -1,6 +1,6 @@
 import { QueryRunner } from 'typeorm';
-import { Team } from 'src/teams/entities/team.entity';
-import { Game } from 'src/games/entities/game.entity';
+import { Team } from '../teams/entities/team.entity';
+import { Game } from '../games/entities/game.entity';
 
 export const generateKnockoutGames = async (
   queryRunner: QueryRunner,

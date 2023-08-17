@@ -14,7 +14,7 @@ import { JwtPayload } from './interfaces/index';
 import { JwtService } from '@nestjs/jwt';
 import { CreateGoogleUserDto } from './dto/create-google-user.dto copy';
 import { LoginGoogleUserDto } from './dto/login-google-user.dto';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from '../email/email.service';
 import { resetPasswordTemplate } from '../helpers/resetPasswordTemplate';
 
 @Injectable()

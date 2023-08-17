@@ -5,7 +5,7 @@ import {
   IsArray,
   IsOptional,
 } from 'class-validator';
-import { IRequestTeam } from 'src/teams/interfaces/team.interface';
+import { IRequestTeam } from '../../teams/interfaces/team.interface';
 
 export class CreateTournamentDto {
   @IsString()

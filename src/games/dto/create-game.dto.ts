@@ -1,5 +1,5 @@
 import { IsNumber, IsObject, IsOptional, Min } from 'class-validator';
-import { Team } from 'src/teams/entities/team.entity';
+import { Team } from '../../teams/entities/team.entity';
 
 export class CreateGameDto {
   @IsObject()

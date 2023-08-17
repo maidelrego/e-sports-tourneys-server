@@ -1,4 +1,4 @@
-import { Tournament } from 'src/tournaments/entities/tournament.entity';
+import { Tournament } from '../../tournaments/entities/tournament.entity';
 import {
   BeforeInsert,
   BeforeUpdate,

@@ -1,5 +1,5 @@
-import { Game } from 'src/games/entities/game.entity';
-import { Tournament } from 'src/tournaments/entities/tournament.entity';
+import { Game } from '../../games/entities/game.entity';
+import { Tournament } from '../../tournaments/entities/tournament.entity';
 import {
   Column,
   CreateDateColumn,

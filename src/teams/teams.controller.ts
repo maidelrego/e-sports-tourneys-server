@@ -10,7 +10,7 @@ import {
 import { TeamsService } from './teams.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
-import { Auth } from 'src/auth/decorators';
+import { Auth } from '../auth/decorators';
 
 @Controller('teams')
 export class TeamsController {

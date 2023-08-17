@@ -10,16 +10,16 @@ import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { DataSource, Repository } from 'typeorm';
 import { Tournament } from './entities/tournament.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/auth/entities/user.entity';
-import { Team } from 'src/teams/entities/team.entity';
+import { User } from '../auth/entities/user.entity';
+import { Team } from '../teams/entities/team.entity';
 import { JwtService } from '@nestjs/jwt';
 import {
   TeamStats,
   getTournamentStandings,
-} from 'src/helpers/getTournamentStandings';
-import { generateGroupPhaseGames } from 'src/helpers/generateLeague';
-import { generateKnockoutGames } from 'src/helpers/generateCup';
-import { Game } from 'src/games/entities/game.entity';
+} from '../helpers/getTournamentStandings';
+import { generateGroupPhaseGames } from '../helpers/generateLeague';
+import { generateKnockoutGames } from '../helpers/generateCup';
+import { Game } from '../games/entities/game.entity';
 
 @Injectable()
 export class TournamentsService {
