@@ -14,6 +14,8 @@ import { JwtPayload } from './interfaces/index';
 import { JwtService } from '@nestjs/jwt';
 import { CreateGoogleUserDto } from './dto/create-google-user.dto copy';
 import { LoginGoogleUserDto } from './dto/login-google-user.dto';
+import { EmailService } from 'src/email/email.service';
+import { resetPasswordTemplate } from '../helpers/resetPasswordTemplate';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +23,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   getUsers() {
@@ -95,6 +98,57 @@ export class AuthService {
       ...user,
       token: this.getJwt({ id: user.id }),
     };
+  }
+
+  async forgotPassword(forgotPasswordDto: { email: string }) {
+    const { email } = forgotPasswordDto;
+
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user) throw new UnauthorizedException('Invalid credentials(Email)');
+
+    const token = this.jwtService.sign({ id: user.id }, { expiresIn: '1m' });
+
+    const link = `${
+      process.env.STAGE === 'prod' ? process.env.PROD_ENV : process.env.DEV_ENV
+    }/reset-password/${token}`;
+
+    const mail = {
+      to: email,
+      from: 'noreply@yolysdelights.com',
+      subject: 'Reset your password',
+      html: resetPasswordTemplate(link),
+    };
+
+    await this.emailService.send(mail);
+
+    return {
+      message:
+        'If the email is correct, you will receive an email with the instructions to reset your password',
+    };
+  }
+
+  async resetPassword(resetPasswordDto: { token: string; password: string }) {
+    const { token, password } = resetPasswordDto;
+
+    try {
+      const payload = await this.jwtService.verify(token);
+      const user = await this.userRepository.findOne({
+        where: { id: payload.id },
+      });
+
+      if (!user) throw new UnauthorizedException('Invalid credentials(Email)');
+
+      user.password = await bcrypt.hashSync(password, 10);
+
+      await this.userRepository.save(user);
+
+      return {
+        message: 'Password changed successfully',
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Token expired');
+    }
   }
 
   private getJwt(payload: JwtPayload) {

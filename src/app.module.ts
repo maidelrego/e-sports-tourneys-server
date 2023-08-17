@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
 import { TeamsModule } from './teams/teams.module';
 import { GamesModule } from './games/games.module';
+import { EmailService } from './email/email.service';
 
 @Module({
   imports: [
@@ -26,6 +27,6 @@ import { GamesModule } from './games/games.module';
     GamesModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [EmailService],
 })
 export class AppModule {}

@@ -39,6 +39,16 @@ export class AuthController {
     return this.authService.loginGoogle(loginGoogleUserDto);
   }
 
+  @Post('forgot-password')
+  forgotPassword(@Body() forgotPasswordDto: { email: string }) {
+    return this.authService.forgotPassword(forgotPasswordDto);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body() resetPasswordDto: { token: string; password: string }) {
+    return this.authService.resetPassword(resetPasswordDto);
+  }
+
   @Get('check-auth-status')
   @Auth()
   checkAuthStatus(@GetUser() user: User) {
