@@ -87,12 +87,17 @@ export class AuthService {
   async loginGoogle(loginGoogleUserDto: LoginGoogleUserDto) {
     const { email } = loginGoogleUserDto;
 
-    const user = await this.userRepository.findOne({
+    let user: User = null;
+
+    user = await this.userRepository.findOne({
       where: { email },
       select: { email: true, password: true, id: true, fullName: true },
     });
 
-    if (!user) throw new UnauthorizedException('Invalid credentials(Email)');
+    if (!user) {
+      user = this.userRepository.create(loginGoogleUserDto);
+      await this.userRepository.save(user);
+    }
 
     return {
       ...user,
