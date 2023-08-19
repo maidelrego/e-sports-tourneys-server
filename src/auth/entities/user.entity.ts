@@ -22,6 +22,11 @@ export class User {
   @Column('text')
   fullName: string;
 
+  @Column('text', { unique: true, nullable: true })
+  nickname: string;
+
+  static usedNumbers: Set<number> = new Set();
+
   @Column('text', { nullable: true })
   googleId: string;
 
@@ -37,6 +42,20 @@ export class User {
   @BeforeInsert()
   emailToLowerCaseInsert() {
     this.email = this.email.toLowerCase().trim();
+  }
+
+  @BeforeInsert()
+  generateUniqueNickname() {
+    const baseNickname = this.fullName.replace(/\s+/g, '').toLowerCase();
+
+    let randomSuffix: number;
+    do {
+      randomSuffix = Math.floor(Math.random() * 9000) + 1000; // Generate a random 4-digit number
+    } while (User.usedNumbers.has(randomSuffix));
+
+    User.usedNumbers.add(randomSuffix);
+
+    this.nickname = `${baseNickname}${randomSuffix}`;
   }
 
   @BeforeUpdate()
