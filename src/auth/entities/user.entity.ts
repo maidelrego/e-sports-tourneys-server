@@ -1,4 +1,5 @@
 import { Tournament } from '../../tournaments/entities/tournament.entity';
+import { Notification } from '../../notifications/entities/notification.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -38,6 +39,9 @@ export class User {
 
   @OneToMany(() => Tournament, (t) => t.admin)
   tournaments: Tournament;
+
+  @OneToMany(() => Notification, (n) => n.User, { onDelete: 'CASCADE' })
+  notifications: Notification;
 
   @BeforeInsert()
   emailToLowerCaseInsert() {

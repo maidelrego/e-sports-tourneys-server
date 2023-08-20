@@ -6,6 +6,8 @@ import { TournamentsModule } from './tournaments/tournaments.module';
 import { TeamsModule } from './teams/teams.module';
 import { GamesModule } from './games/games.module';
 import { EmailService } from './email/email.service';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ClientWsModule } from './client-ws/client-ws.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { EmailService } from './email/email.service';
     TournamentsModule,
     TeamsModule,
     GamesModule,
+    NotificationsModule,
+    ClientWsModule,
   ],
   controllers: [],
   providers: [EmailService],
