@@ -40,7 +40,7 @@ export class User {
   @OneToMany(() => Tournament, (t) => t.admin)
   tournaments: Tournament;
 
-  @OneToMany(() => Notification, (n) => n.User, { onDelete: 'CASCADE' })
+  @OneToMany(() => Notification, (n) => n.sender, { onDelete: 'CASCADE' })
   notifications: Notification;
 
   @BeforeInsert()

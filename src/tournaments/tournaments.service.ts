@@ -139,10 +139,6 @@ export class TournamentsService {
     await this.tournamentRepository.save(tournament);
   }
 
-  findAll() {
-    return `This action returns all tournaments`;
-  }
-
   async findAllWithAdmin(user: User) {
     const structuredTournaments = [];
 

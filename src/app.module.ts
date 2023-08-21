@@ -7,7 +7,7 @@ import { TeamsModule } from './teams/teams.module';
 import { GamesModule } from './games/games.module';
 import { EmailService } from './email/email.service';
 import { NotificationsModule } from './notifications/notifications.module';
-import { ClientWsModule } from './client-ws/client-ws.module';
+import { ServerWsModule } from './server-ws/server-ws.module';
 
 @Module({
   imports: [
@@ -28,7 +28,7 @@ import { ClientWsModule } from './client-ws/client-ws.module';
     TeamsModule,
     GamesModule,
     NotificationsModule,
-    ClientWsModule,
+    ServerWsModule,
   ],
   controllers: [],
   providers: [EmailService],

@@ -6,16 +6,20 @@ interface ConnectedClient {
 }
 
 @Injectable()
-export class ClientWsService {
-  connectedClients: ConnectedClient = {};
+export class ServerWsService {
+  private connectedClients: ConnectedClient = {};
 
-  async handleConnection(client: Socket) {
+  handleConnection(client: Socket) {
     console.log('Client connected', client.id);
     this.connectedClients[client.id] = client;
   }
 
-  async handleDisconnect(client: Socket) {
+  handleDisconnect(client: Socket) {
     console.log('Client disconnected', client.id);
     delete this.connectedClients[client.id];
+  }
+
+  getConnectedClients(): string[] {
+    return Object.keys(this.connectedClients);
   }
 }

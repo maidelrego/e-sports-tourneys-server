@@ -62,12 +62,6 @@ export class TournamentsController {
     return { message: 'Successfully joined tournament.' };
   }
 
-  @Get()
-  @Auth()
-  findAll() {
-    return this.tournamentsService.findAll();
-  }
-
   @Get('byAdminId')
   @Auth()
   getTournamentsByAdminId(@GetUser() user: User) {
