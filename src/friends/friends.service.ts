@@ -1,6 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateFriendDto } from './dto/create-friend.dto';
-import { UpdateFriendDto } from './dto/update-friend.dto';
 import { User } from '@src/auth/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Friend, Status } from './entities/friend.entity';
@@ -65,15 +68,14 @@ export class FriendsService {
     await this.userRepository.save([creator, receiver]);
   }
 
-  update(id: number, updateFriendDto: UpdateFriendDto) {
-    return `This action updates a #${id} friend`;
-  }
-
   remove(id: number) {
     return `This action removes a #${id} friend`;
   }
 
   private handleDatabaseExceptions(error: any) {
-    throw new InternalServerErrorException('Unexpected error, check server');
+    throw new InternalServerErrorException(
+      'Unexpected error, check server',
+      error,
+    );
   }
 }

@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { Notification } from './entities/notification.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -46,6 +41,9 @@ export class NotificationsService {
   }
 
   private handleDatabaseExceptions(error: any) {
-    throw new InternalServerErrorException('Unexpected error, check server');
+    throw new InternalServerErrorException(
+      'Unexpected error, check server',
+      error,
+    );
   }
 }

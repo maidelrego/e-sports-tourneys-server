@@ -93,6 +93,7 @@ export class AuthService {
     user = await this.userRepository.findOne({
       where: { email },
       select: { email: true, password: true, id: true, fullName: true },
+      relations: ['notifications', 'friends'],
     });
 
     if (!user) {
@@ -109,7 +110,10 @@ export class AuthService {
   async forgotPassword(forgotPasswordDto: { email: string }) {
     const { email } = forgotPasswordDto;
 
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['notifications', 'friends'],
+    });
 
     if (!user) throw new UnauthorizedException('Invalid credentials(Email)');
 
@@ -141,6 +145,7 @@ export class AuthService {
       const payload = await this.jwtService.verify(token);
       const user = await this.userRepository.findOne({
         where: { id: payload.id },
+        relations: ['notifications', 'friends'],
       });
 
       if (!user) throw new UnauthorizedException('Invalid credentials(Email)');
@@ -163,8 +168,13 @@ export class AuthService {
   }
 
   async checkAuthStatus(user: User) {
+    const userRelations = await this.userRepository.findOne({
+      where: { id: user.id },
+      relations: ['notifications', 'friends'],
+    });
+
     return {
-      ...user,
+      ...userRelations,
       token: this.getJwt({ id: user.id }),
     };
   }

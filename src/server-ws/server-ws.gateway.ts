@@ -15,18 +15,31 @@ export class ServerWsGateway
 
   constructor(private readonly serverWsService: ServerWsService) {}
 
-  handleConnection(client: Socket) {
-    this.serverWsService.handleConnection(client);
+  async handleConnection(client: Socket) {
+    const connectedUser = await this.serverWsService.handleConnection(client);
 
-    this.server.emit(
-      'clients-list',
-      this.serverWsService.getConnectedClients(),
-    );
+    const allClients = await this.serverWsService.getConnectedClients();
+
+    for (const [id, { user }] of Object.entries(allClients)) {
+      for (const friend of user.friends) {
+        if (friend.id === connectedUser.id) {
+          this.server.to(id).emit('connectedClient', connectedUser);
+        }
+      }
+    }
   }
 
-  handleDisconnect(client: Socket) {
-    this.serverWsService.handleDisconnect(client);
+  async handleDisconnect(client: Socket) {
+    const disconectedUser = await this.serverWsService.handleDisconnect(client);
 
-    this.server.emit('disconnectedClient', client.id);
+    const allClients = await this.serverWsService.getConnectedClients();
+
+    for (const [id, { user }] of Object.entries(allClients)) {
+      for (const friend of user.friends) {
+        if (friend.id === disconectedUser.id) {
+          this.server.to(id).emit('disconnectedClient', disconectedUser);
+        }
+      }
+    }
   }
 }

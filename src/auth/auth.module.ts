@@ -12,7 +12,7 @@ import { EmailService } from '../email/email.service';
 @Module({
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, EmailService],
-  exports: [JwtStrategy, TypeOrmModule, PassportModule, JwtModule],
+  exports: [JwtStrategy, TypeOrmModule, PassportModule, JwtModule, AuthService],
   imports: [
     ConfigModule,
     TypeOrmModule.forFeature([User]),

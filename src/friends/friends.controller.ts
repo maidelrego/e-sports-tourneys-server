@@ -1,15 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { FriendsService } from './friends.service';
 import { CreateFriendDto } from './dto/create-friend.dto';
-import { UpdateFriendDto } from './dto/update-friend.dto';
 import { Auth, GetUser } from '@src/auth/decorators';
 import { User } from '@src/auth/entities/user.entity';
 
@@ -27,11 +18,6 @@ export class FriendsController {
   @Auth()
   approveFriendRequest(@Param('request_id') request_id: string) {
     return this.friendsService.approveFriendRequest(request_id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFriendDto: UpdateFriendDto) {
-    return this.friendsService.update(+id, updateFriendDto);
   }
 
   @Delete(':id')

@@ -1,25 +1,67 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../auth/entities/user.entity';
 
 interface ConnectedClient {
-  [id: string]: Socket;
+  [id: string]: {
+    socket: Socket;
+    user: User;
+  };
 }
 
 @Injectable()
 export class ServerWsService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
   private connectedClients: ConnectedClient = {};
 
-  handleConnection(client: Socket) {
-    console.log('Client connected', client.id);
-    this.connectedClients[client.id] = client;
+  async handleConnection(client: Socket) {
+    const userId = client.handshake.headers.auth as string;
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['friends'],
+    });
+
+    if (!user) throw new Error('User not found');
+
+    this.checkUserConnection(user);
+
+    this.connectedClients[client.id] = { socket: client, user };
+    return user;
   }
 
-  handleDisconnect(client: Socket) {
-    console.log('Client disconnected', client.id);
+  async handleDisconnect(client: Socket) {
+    const userId = client.handshake.headers.auth as string;
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['friends'],
+    });
+
+    if (!user) throw new Error('User not found');
+
     delete this.connectedClients[client.id];
+
+    return user;
   }
 
-  getConnectedClients(): string[] {
-    return Object.keys(this.connectedClients);
+  getConnectedClients(): ConnectedClient {
+    return this.connectedClients;
+  }
+
+  checkUserConnection(user: User) {
+    for (const clientId of Object.keys(this.connectedClients)) {
+      const connectedUser = this.connectedClients[clientId];
+
+      if (connectedUser.user.id === user.id) {
+        connectedUser.socket.disconnect();
+        break;
+      }
+    }
   }
 }
