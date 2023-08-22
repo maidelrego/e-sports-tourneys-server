@@ -8,6 +8,7 @@ import { GamesModule } from './games/games.module';
 import { EmailService } from './email/email.service';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ServerWsModule } from './server-ws/server-ws.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ServerWsModule } from './server-ws/server-ws.module';
     GamesModule,
     NotificationsModule,
     ServerWsModule,
+    FriendsModule,
   ],
   controllers: [],
   providers: [EmailService],

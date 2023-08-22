@@ -1,10 +1,14 @@
 import { Tournament } from '../../tournaments/entities/tournament.entity';
 import { Notification } from '../../notifications/entities/notification.entity';
+import { Friend } from '../../friends/entities/friend.entity';
+
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -42,6 +46,16 @@ export class User {
 
   @OneToMany(() => Notification, (n) => n.sender, { onDelete: 'CASCADE' })
   notifications: Notification;
+
+  @OneToMany(() => Friend, (n) => n.receiver, { onDelete: 'CASCADE' })
+  receivefriendRequests: Friend[];
+
+  @OneToMany(() => Friend, (n) => n.creator, { onDelete: 'CASCADE' })
+  creatorfriendRequests: Friend[];
+
+  @ManyToMany(() => User, (user) => user.friends)
+  @JoinTable()
+  friends: User[];
 
   @BeforeInsert()
   emailToLowerCaseInsert() {
