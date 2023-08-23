@@ -3,6 +3,7 @@ import {
   WebSocketGateway,
   OnGatewayDisconnect,
   WebSocketServer,
+  SubscribeMessage,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { ServerWsService } from './server-ws.service';
@@ -15,9 +16,15 @@ export class ServerWsGateway
 
   constructor(private readonly serverWsService: ServerWsService) {}
 
+  @SubscribeMessage('get-connected-clients')
+  async getConnectedClients(client: Socket) {
+    const allClients = await this.serverWsService.getConnectedClients();
+    const users = Object.values(allClients).map(({ user }) => user);
+    client.emit('connected-clients', users);
+  }
+
   async handleConnection(client: Socket) {
     const connectedUser = await this.serverWsService.handleConnection(client);
-
     const allClients = await this.serverWsService.getConnectedClients();
 
     for (const [id, { user }] of Object.entries(allClients)) {
@@ -31,7 +38,6 @@ export class ServerWsGateway
 
   async handleDisconnect(client: Socket) {
     const disconectedUser = await this.serverWsService.handleDisconnect(client);
-
     const allClients = await this.serverWsService.getConnectedClients();
 
     for (const [id, { user }] of Object.entries(allClients)) {
