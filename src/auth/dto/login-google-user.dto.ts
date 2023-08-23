@@ -10,4 +10,7 @@ export class LoginGoogleUserDto {
 
   @IsString()
   googleId: string;
+
+  @IsString()
+  avatar: string;
 }

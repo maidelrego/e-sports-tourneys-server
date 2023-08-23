@@ -38,6 +38,12 @@ export class User {
   @Column('bool', { default: true })
   isActive: boolean;
 
+  @Column('text', { nullable: true })
+  avatar: string;
+
+  @Column('text', { nullable: true })
+  cloudinaryId: string;
+
   @Column('text', { array: true, default: ['user'] })
   roles: string[];
 
@@ -45,7 +51,7 @@ export class User {
   tournaments: Tournament;
 
   @OneToMany(() => Notification, (n) => n.sender, { onDelete: 'CASCADE' })
-  notifications: Notification;
+  notifications: Notification[];
 
   @OneToMany(() => Friend, (n) => n.receiver, { onDelete: 'CASCADE' })
   receivefriendRequests: Friend[];
@@ -79,5 +85,13 @@ export class User {
   @BeforeUpdate()
   emailToLowerCaseUpdate() {
     this.email = this.email.toLowerCase().trim();
+  }
+
+  @BeforeUpdate()
+  updateNickname() {
+    const baseNickname = this.fullName.replace(/\s+/g, '').toLowerCase();
+    const currentSuffix = this.nickname.substring(this.nickname.length - 4);
+
+    this.nickname = `${baseNickname}${currentSuffix}`;
   }
 }

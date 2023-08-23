@@ -9,6 +9,7 @@ import { EmailService } from './email/email.service';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ServerWsModule } from './server-ws/server-ws.module';
 import { FriendsModule } from './friends/friends.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { FriendsModule } from './friends/friends.module';
     NotificationsModule,
     ServerWsModule,
     FriendsModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [EmailService],

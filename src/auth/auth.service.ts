@@ -16,6 +16,9 @@ import { CreateGoogleUserDto } from './dto/create-google-user.dto copy';
 import { LoginGoogleUserDto } from './dto/login-google-user.dto';
 import { EmailService } from '../email/email.service';
 import { resetPasswordTemplate } from '../helpers/resetPasswordTemplate';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { getDefaultAvatar } from '../helpers/getDefaultAvatar';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +27,7 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   getUsers() {
@@ -33,15 +37,16 @@ export class AuthService {
   async create(createUserDto: CreateUserDto) {
     try {
       const { password, ...userData } = createUserDto;
+      const randomAvatar = await getDefaultAvatar(userData.fullName);
 
       const newUser = this.userRepository.create({
         ...userData,
         password: await bcrypt.hashSync(password, 10),
+        avatar: randomAvatar,
       });
       await this.userRepository.save(newUser);
 
       delete newUser.password;
-      console.log(newUser);
       return {
         ...newUser,
         token: this.getJwt({ id: newUser.id }),
@@ -70,7 +75,13 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true, id: true, fullName: true },
+      select: {
+        email: true,
+        password: true,
+        id: true,
+        fullName: true,
+        avatar: true,
+      },
       relations: ['notifications', 'friends'],
     });
 
@@ -92,13 +103,21 @@ export class AuthService {
 
     user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true, id: true, fullName: true },
+      select: {
+        email: true,
+        password: true,
+        id: true,
+        fullName: true,
+        avatar: true,
+      },
       relations: ['notifications', 'friends'],
     });
 
     if (!user) {
       user = this.userRepository.create(loginGoogleUserDto);
       await this.userRepository.save(user);
+      user.notifications = [];
+      user.friends = [];
     }
 
     return {
@@ -160,6 +179,42 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException('Token expired');
     }
+  }
+
+  async update(updateUserDto: UpdateUserDto, id: string) {
+    const user = await this.findUserById(id);
+
+    const { image, ...resOfUser } = updateUserDto;
+
+    if (image) {
+      if (user.cloudinaryId) {
+        await this.cloudinaryService.deleteImages(user.cloudinaryId);
+      }
+
+      const { secure_url, asset_id } = await this.cloudinaryService.uploadImage(
+        { folder: 'Avatars' },
+        image,
+      );
+
+      resOfUser.avatar = secure_url;
+      resOfUser.cloudinaryId = asset_id;
+    }
+
+    try {
+      Object.assign(user, resOfUser);
+      await this.userRepository.save(user);
+    } catch (error) {
+      this.handleErrors(error);
+    }
+
+    return await this.findUserById(id);
+  }
+
+  private async findUserById(id: string) {
+    return await this.userRepository.findOne({
+      where: { id: id },
+      relations: ['notifications', 'friends'],
+    });
   }
 
   private getJwt(payload: JwtPayload) {

@@ -1,4 +1,16 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  Param,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -9,6 +21,7 @@ import { UserRoleGuard } from './guards/user-role.guard';
 import { ValidRoles } from './interfaces';
 import { CreateGoogleUserDto } from './dto/create-google-user.dto copy';
 import { LoginGoogleUserDto } from './dto/login-google-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -47,6 +60,24 @@ export class AuthController {
   @Post('reset-password')
   resetPassword(@Body() resetPasswordDto: { token: string; password: string }) {
     return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @Post('update/:id')
+  @Auth()
+  @UseInterceptors(FileInterceptor('image'))
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [new MaxFileSizeValidator({ maxSize: 311000 })],
+        fileIsRequired: false,
+      }),
+    )
+    image: Express.Multer.File,
+  ) {
+    updateUserDto.image = image;
+    return this.authService.update(updateUserDto, id);
   }
 
   @Get('check-auth-status')
