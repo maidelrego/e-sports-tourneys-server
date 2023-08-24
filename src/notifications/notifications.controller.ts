@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { Auth, GetUser } from '@src/auth/decorators';
@@ -19,6 +27,12 @@ export class NotificationsController {
     @GetUser() user: User,
   ) {
     return this.notificationsService.create(genaricNotificationDto, user);
+  }
+
+  @Put(':id')
+  @Auth()
+  update(@Param('id') id: string) {
+    return this.notificationsService.markAsRead(id);
   }
 
   @Get('find-notifications')

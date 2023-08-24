@@ -64,6 +64,23 @@ export class NotificationsService {
     }
   }
 
+  async markAsRead(id: string) {
+    try {
+      const notification = await this.notificationRepository.findOne({
+        where: { id: id },
+      });
+
+      if (!notification)
+        throw new InternalServerErrorException('Notification not found');
+
+      notification.read = true;
+      await this.notificationRepository.save(notification);
+      return notification;
+    } catch (error) {
+      this.handleDatabaseExceptions(error);
+    }
+  }
+
   async findNotificationByUser(user: User) {
     try {
       const notifications = await this.notificationRepository.find({
