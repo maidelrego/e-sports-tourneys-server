@@ -82,7 +82,7 @@ export class AuthService {
         fullName: true,
         avatar: true,
       },
-      relations: ['notifications', 'friends'],
+      relations: ['receivedNotifications', 'friends'],
     });
 
     if (!user) throw new UnauthorizedException('Invalid credentials(Email)');
@@ -110,13 +110,13 @@ export class AuthService {
         fullName: true,
         avatar: true,
       },
-      relations: ['notifications', 'friends'],
+      relations: ['receivedNotifications', 'friends'],
     });
 
     if (!user) {
       user = this.userRepository.create(loginGoogleUserDto);
       await this.userRepository.save(user);
-      user.notifications = [];
+      user.receivedNotifications = [];
       user.friends = [];
     }
 
@@ -131,7 +131,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email },
-      relations: ['notifications', 'friends'],
+      relations: ['receivedNotifications', 'friends'],
     });
 
     if (!user) throw new UnauthorizedException('Invalid credentials(Email)');
@@ -162,10 +162,7 @@ export class AuthService {
 
     try {
       const payload = await this.jwtService.verify(token);
-      const user = await this.userRepository.findOne({
-        where: { id: payload.id },
-        relations: ['notifications', 'friends'],
-      });
+      const user = await this.findUserById(payload.id);
 
       if (!user) throw new UnauthorizedException('Invalid credentials(Email)');
 
@@ -210,10 +207,10 @@ export class AuthService {
     return await this.findUserById(id);
   }
 
-  private async findUserById(id: string) {
+  public async findUserById(id: string) {
     return await this.userRepository.findOne({
       where: { id: id },
-      relations: ['notifications', 'friends'],
+      relations: ['receivedNotifications', 'friends'],
     });
   }
 
@@ -223,10 +220,7 @@ export class AuthService {
   }
 
   async checkAuthStatus(user: User) {
-    const userRelations = await this.userRepository.findOne({
-      where: { id: user.id },
-      relations: ['notifications', 'friends'],
-    });
+    const userRelations = await this.findUserById(user.id);
 
     return {
       ...userRelations,

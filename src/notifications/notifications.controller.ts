@@ -3,6 +3,7 @@ import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { Auth, GetUser } from '@src/auth/decorators';
 import { User } from '@src/auth/entities/user.entity';
+import { FriendRequestNotificationDto } from './dto/friend-request-notification.dto';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -11,10 +12,13 @@ export class NotificationsController {
   @Post()
   @Auth()
   create(
-    @Body() createNotificationDto: CreateNotificationDto,
+    @Body()
+    genaricNotificationDto:
+      | CreateNotificationDto
+      | FriendRequestNotificationDto,
     @GetUser() user: User,
   ) {
-    return this.notificationsService.create(createNotificationDto, user);
+    return this.notificationsService.create(genaricNotificationDto, user);
   }
 
   @Get('find-notifications')

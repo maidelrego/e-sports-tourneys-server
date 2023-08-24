@@ -50,8 +50,15 @@ export class User {
   @OneToMany(() => Tournament, (t) => t.admin)
   tournaments: Tournament;
 
-  @OneToMany(() => Notification, (n) => n.sender, { onDelete: 'CASCADE' })
-  notifications: Notification[];
+  @OneToMany(() => Notification, (n) => n.receiver, {
+    onDelete: 'CASCADE',
+  })
+  receivedNotifications: Notification[];
+
+  @OneToMany(() => Notification, (n) => n.sender, {
+    onDelete: 'CASCADE',
+  })
+  sentNotifications: Notification[];
 
   @OneToMany(() => Friend, (n) => n.receiver, { onDelete: 'CASCADE' })
   receivefriendRequests: Friend[];

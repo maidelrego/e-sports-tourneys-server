@@ -8,11 +8,11 @@ import { User } from '@src/auth/entities/user.entity';
 export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
 
-  @Post()
-  @Auth()
-  create(@Body() createFriendDto: CreateFriendDto, @GetUser() creator: User) {
-    return this.friendsService.create(createFriendDto, creator);
-  }
+  // @Post()
+  // @Auth()
+  // create(@Body() createFriendDto: CreateFriendDto, @GetUser() creator: User) {
+  //   return this.friendsService.create(createFriendDto, creator);
+  // }
 
   @Get('approve/:request_id')
   @Auth()

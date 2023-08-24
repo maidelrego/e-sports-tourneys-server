@@ -8,6 +8,7 @@ import { AuthModule } from '@src/auth/auth.module';
 @Module({
   controllers: [FriendsController],
   providers: [FriendsService],
+  exports: [FriendsService],
   imports: [TypeOrmModule.forFeature([Friend]), AuthModule],
 })
 export class FriendsModule {}

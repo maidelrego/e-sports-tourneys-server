@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { User } from '../../auth/entities/user.entity';
 
 export enum NotificationTypes {
@@ -11,10 +18,10 @@ export class Notification {
   @PrimaryGeneratedColumn('increment')
   id: string;
 
-  @Column({ nullable: true })
-  receiver: string;
+  @ManyToOne(() => User, (user) => user.receivedNotifications, { eager: false })
+  receiver: User;
 
-  @ManyToOne(() => User, (user) => user.notifications, { eager: true })
+  @ManyToOne(() => User, (user) => user.sentNotifications, { eager: true })
   sender: User;
 
   @Column('bool', { default: false })
@@ -25,4 +32,19 @@ export class Notification {
     enum: NotificationTypes,
   })
   type: string;
+
+  @Column({ nullable: true })
+  meta: string;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    nullable: true,
+  })
+  updatedAt: Date;
 }

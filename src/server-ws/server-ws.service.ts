@@ -54,6 +54,17 @@ export class ServerWsService {
     return this.connectedClients;
   }
 
+  sendFriendInvitation(senderName: string, reiciver: User, metaData: string) {
+    const client: Socket = this.findUserConnection(reiciver);
+
+    if (client) {
+      client.emit('friend-request-notification', {
+        meta: metaData,
+        sender: senderName,
+      });
+    }
+  }
+
   checkUserConnection(user: User) {
     for (const clientId of Object.keys(this.connectedClients)) {
       const connectedUser = this.connectedClients[clientId];
@@ -63,5 +74,19 @@ export class ServerWsService {
         break;
       }
     }
+  }
+
+  findUserConnection(user: User): Socket {
+    let clientSocket: Socket = null;
+
+    for (const clientId of Object.keys(this.connectedClients)) {
+      const connectedUser = this.connectedClients[clientId];
+
+      if (connectedUser.user.id === user.id) {
+        clientSocket = connectedUser.socket;
+        break;
+      }
+    }
+    return clientSocket;
   }
 }

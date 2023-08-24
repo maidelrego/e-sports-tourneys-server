@@ -18,12 +18,8 @@ export class FriendsService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createFriendDto: CreateFriendDto, creator: User) {
+  async create(creator: User, receiver: User) {
     try {
-      const receiver = await this.userRepository.findOne({
-        where: { id: createFriendDto.receiver },
-      });
-
       if (!creator || !receiver) {
         throw new NotFoundException('Users not found');
       }
@@ -73,6 +69,7 @@ export class FriendsService {
   }
 
   private handleDatabaseExceptions(error: any) {
+    console.log(error);
     throw new InternalServerErrorException(
       'Unexpected error, check server',
       error,
