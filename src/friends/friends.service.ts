@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateFriendDto } from './dto/create-friend.dto';
 import { User } from '@src/auth/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Friend, Status } from './entities/friend.entity';

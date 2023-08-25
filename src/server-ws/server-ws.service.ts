@@ -3,6 +3,7 @@ import { Socket } from 'socket.io';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../auth/entities/user.entity';
+import { Notification } from '../notifications/entities/notification.entity';
 
 interface ConnectedClient {
   [id: string]: {
@@ -54,13 +55,12 @@ export class ServerWsService {
     return this.connectedClients;
   }
 
-  sendFriendInvitation(senderName: string, reiciver: User, metaData: string) {
-    const client: Socket = this.findUserConnection(reiciver);
+  sendFriendInvitation(receiver: User, notification: Notification) {
+    const client: Socket = this.findUserConnection(receiver);
 
     if (client) {
       client.emit('friend-request-notification', {
-        meta: metaData,
-        sender: senderName,
+        ...notification,
       });
     }
   }

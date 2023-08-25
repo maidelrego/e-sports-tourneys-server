@@ -162,7 +162,7 @@ export class AuthService {
 
     try {
       const payload = await this.jwtService.verify(token);
-      const user = await this.findUserById(payload.id);
+      const user = await this.findUser('id', payload.id);
 
       if (!user) throw new UnauthorizedException('Invalid credentials(Email)');
 
@@ -179,7 +179,7 @@ export class AuthService {
   }
 
   async update(updateUserDto: UpdateUserDto, id: string) {
-    const user = await this.findUserById(id);
+    const user = await this.findUser('id', id);
 
     const { image, ...resOfUser } = updateUserDto;
 
@@ -204,12 +204,12 @@ export class AuthService {
       this.handleErrors(error);
     }
 
-    return await this.findUserById(id);
+    return await this.findUser('id', id);
   }
 
-  public async findUserById(id: string) {
+  public async findUser(searchParam: string, searchValue: string) {
     return await this.userRepository.findOne({
-      where: { id: id },
+      where: { [searchParam]: searchValue },
       relations: ['receivedNotifications', 'friends'],
     });
   }
@@ -220,7 +220,7 @@ export class AuthService {
   }
 
   async checkAuthStatus(user: User) {
-    const userRelations = await this.findUserById(user.id);
+    const userRelations = await this.findUser('id', user.id);
 
     return {
       ...userRelations,

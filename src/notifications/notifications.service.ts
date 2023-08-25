@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import {
   Notification,
@@ -29,38 +33,51 @@ export class NotificationsService {
     sender: User,
   ) {
     const { receiver, type } = genericNotificationDto;
-    let metaData = null;
-    try {
-      const receiverUser: User = await this.authService.findUserById(receiver);
 
-      const notification = this.notificationRepository.create({
+    let metaData = null;
+    let notification = null;
+
+    try {
+      const receiverUser: User = await this.authService.findUser(
+        'nickname',
+        receiver,
+      );
+
+      if (!receiverUser) throw new BadRequestException('User not found');
+
+      if (receiverUser.friends.find((u) => u.id === sender.id))
+        throw new BadRequestException('You are already friends');
+
+      const notificationData = this.notificationRepository.create({
         type: type,
         receiver: receiverUser,
         sender: sender,
       });
 
-      //TODO: We have to create a switch for type of notification
-      if (type === NotificationTypes.FRIEND_REQUEST) {
-        const savedFriendRequest = await this.friendService.create(
-          sender,
-          receiverUser,
-        );
+      metaData = await this.friendService.create(sender, receiverUser);
 
-        metaData = savedFriendRequest.id;
+      notification = await this.notificationRepository.save({
+        ...notificationData,
+        meta: metaData.id,
+      });
 
-        this.serverWService.sendFriendInvitation(
-          sender.fullName,
-          receiverUser,
-          metaData,
-        );
+      switch (type) {
+        case NotificationTypes.FRIEND_REQUEST:
+          this.serverWService.sendFriendInvitation(receiverUser, notification);
+          break;
+        case NotificationTypes.TOURNAMENT_REQUEST:
+          this.serverWService.sendFriendInvitation(receiverUser, notification);
+          break;
+        default:
+          break;
       }
 
-      await this.notificationRepository.save({
-        ...notification,
-        meta: metaData,
-      });
+      return notification;
     } catch (error) {
-      this.handleDatabaseExceptions(error);
+      throw new BadRequestException('Bad data', {
+        cause: new Error(),
+        description: error.message,
+      });
     }
   }
 
@@ -94,6 +111,10 @@ export class NotificationsService {
 
   remove(id: number) {
     return this.notificationRepository.delete(id);
+  }
+
+  private handleNotificationErrors(err: any) {
+    throw new InternalServerErrorException(err);
   }
 
   private handleDatabaseExceptions(error: any) {
