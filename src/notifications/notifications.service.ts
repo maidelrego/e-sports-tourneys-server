@@ -43,10 +43,28 @@ export class NotificationsService {
         receiver,
       );
 
-      if (!receiverUser) throw new BadRequestException('User not found');
+      if (!receiverUser) {
+        return {
+          ok: false,
+          msg: 'Nickname not found',
+        };
+      }
 
-      if (receiverUser.friends.find((u) => u.id === sender.id))
-        throw new BadRequestException('You are already friends');
+      if (receiverUser.friends.find((u) => u.id === sender.id)) {
+        return {
+          ok: false,
+          msg: 'You are already friends',
+        };
+      }
+
+      if (
+        await this.friendService.existPendingRequest(sender.id, receiverUser.id)
+      ) {
+        return {
+          ok: false,
+          msg: 'You are already have a pending friend request',
+        };
+      }
 
       const notificationData = this.notificationRepository.create({
         type: type,
@@ -72,12 +90,12 @@ export class NotificationsService {
           break;
       }
 
-      return notification;
+      return {
+        ok: true,
+        msg: 'Request sent successfully',
+      };
     } catch (error) {
-      throw new BadRequestException('Bad data', {
-        cause: new Error(),
-        description: error.message,
-      });
+      this.handleDatabaseExceptions(error);
     }
   }
 
@@ -118,7 +136,6 @@ export class NotificationsService {
   }
 
   private handleDatabaseExceptions(error: any) {
-    console.log(error);
     throw new InternalServerErrorException(
       'Unexpected error, check server',
       error,

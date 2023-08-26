@@ -33,6 +33,19 @@ export class FriendsService {
     }
   }
 
+  async existPendingRequest(creatorId: string, receiverId: string) {
+    const response = await this.friendRepository.findOne({
+      where: {
+        creator: { id: creatorId },
+        receiver: { id: receiverId },
+        status: Status.PENDING,
+      },
+    });
+    console.log(response);
+
+    return response !== null ? true : false;
+  }
+
   async approveFriendRequest(requestId: string) {
     const request = await this.friendRepository.findOne({
       where: { id: requestId },

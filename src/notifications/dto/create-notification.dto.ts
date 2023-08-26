@@ -1,8 +1,15 @@
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { NotificationTypes } from '../entities/notification.entity';
 
 export class CreateNotificationDto {
   @IsString()
+  @MaxLength(10)
   receiver: string;
 
   @IsBoolean()

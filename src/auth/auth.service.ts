@@ -81,6 +81,7 @@ export class AuthService {
         id: true,
         fullName: true,
         avatar: true,
+        nickname: true,
       },
       relations: ['receivedNotifications', 'friends'],
     });
@@ -109,6 +110,7 @@ export class AuthService {
         id: true,
         fullName: true,
         avatar: true,
+        nickname: true,
       },
       relations: ['receivedNotifications', 'friends'],
     });
