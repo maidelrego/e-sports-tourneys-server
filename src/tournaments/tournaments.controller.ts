@@ -41,12 +41,9 @@ export class TournamentsController {
   @Auth()
   async joinTournament(@Body() data: { token: string }, @GetUser() user: User) {
     const { token } = data;
-    console.log('token', token);
 
     // Decode the JWT to extract uniqueId and accessType
     const decoded = this.tournamentsService.decodeTournamentToken(token);
-
-    console.log('decoded', decoded);
 
     if (!decoded) {
       throw new UnauthorizedException('Invalid JWT token.');

@@ -41,9 +41,20 @@ export class FriendsService {
         status: Status.PENDING,
       },
     });
-    console.log(response);
 
     return response !== null ? true : false;
+  }
+
+  async pendingFriendRequests(user: User) {
+    try {
+      const requests = await this.friendRepository.find({
+        where: [{ creator: { id: user.id }, status: Status.PENDING }],
+      });
+
+      return requests;
+    } catch (error) {
+      this.handleDatabaseExceptions(error);
+    }
   }
 
   async approveFriendRequest(requestId: string) {
@@ -76,12 +87,11 @@ export class FriendsService {
     await this.userRepository.save([creator, receiver]);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} friend`;
+  remove(id: string) {
+    return this.friendRepository.delete(id);
   }
 
   private handleDatabaseExceptions(error: any) {
-    console.log(error);
     throw new InternalServerErrorException(
       'Unexpected error, check server',
       error,

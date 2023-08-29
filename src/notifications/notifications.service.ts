@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import {
   Notification,
@@ -127,12 +123,21 @@ export class NotificationsService {
     }
   }
 
-  remove(id: number) {
-    return this.notificationRepository.delete(id);
-  }
+  async remove(id: string) {
+    const notification = await this.notificationRepository.findOne({
+      where: { id: id },
+    });
 
-  private handleNotificationErrors(err: any) {
-    throw new InternalServerErrorException(err);
+    if (!notification)
+      throw new InternalServerErrorException('Notification not found');
+
+    const { meta, type } = notification;
+
+    if (type === NotificationTypes.FRIEND_REQUEST) {
+      await this.friendService.remove(meta);
+    }
+
+    await this.notificationRepository.delete(id);
   }
 
   private handleDatabaseExceptions(error: any) {

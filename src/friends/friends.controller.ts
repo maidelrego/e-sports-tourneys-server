@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete } from '@nestjs/common';
 import { FriendsService } from './friends.service';
-import { CreateFriendDto } from './dto/create-friend.dto';
 import { Auth, GetUser } from '@src/auth/decorators';
 import { User } from '@src/auth/entities/user.entity';
 
@@ -8,13 +7,13 @@ import { User } from '@src/auth/entities/user.entity';
 export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
 
-  // @Post()
-  // @Auth()
-  // create(@Body() createFriendDto: CreateFriendDto, @GetUser() creator: User) {
-  //   return this.friendsService.create(createFriendDto, creator);
-  // }
+  @Get('pendingFriendRequests')
+  @Auth()
+  pendingFriendRequests(@GetUser() user: User) {
+    return this.friendsService.pendingFriendRequests(user);
+  }
 
-  @Get('approve/:request_id')
+  @Post('approve/:request_id')
   @Auth()
   approveFriendRequest(@Param('request_id') request_id: string) {
     return this.friendsService.approveFriendRequest(request_id);
@@ -22,6 +21,6 @@ export class FriendsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.friendsService.remove(+id);
+    return this.friendsService.remove(id);
   }
 }

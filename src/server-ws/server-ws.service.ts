@@ -57,7 +57,6 @@ export class ServerWsService {
 
   sendFriendInvitation(receiver: User, notification: Notification) {
     const client: Socket = this.findUserConnection(receiver);
-    console.log(client, notification);
 
     if (client) {
       client.emit('friend-request-notification', {

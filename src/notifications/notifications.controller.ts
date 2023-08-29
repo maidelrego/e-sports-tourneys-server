@@ -44,6 +44,6 @@ export class NotificationsController {
   @Delete(':id')
   @Auth()
   remove(@Param('id') id: string) {
-    return this.notificationsService.remove(+id);
+    return this.notificationsService.remove(id);
   }
 }
