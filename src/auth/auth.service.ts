@@ -117,6 +117,10 @@ export class AuthService {
 
     if (!user) {
       user = this.userRepository.create(loginGoogleUserDto);
+      if (!user.avatar) {
+        const randomAvatar = await getDefaultAvatar(user.fullName);
+        user.avatar = randomAvatar;
+      }
       await this.userRepository.save(user);
       user.receivedNotifications = [];
       user.friends = [];

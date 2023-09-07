@@ -66,6 +66,7 @@ export class NotificationsService {
         type: type,
         receiver: receiverUser,
         sender: sender,
+        createdAt: new Date(),
       });
 
       metaData = await this.friendService.create(sender, receiverUser);
