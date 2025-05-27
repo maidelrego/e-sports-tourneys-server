@@ -43,7 +43,7 @@ Create a `.env` file in the project root:
 
 1. **Clone the repo**  
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/maidelrego/e-sports-tourneys-server.git
    cd e-sports-tourneys-server
    ```
 
