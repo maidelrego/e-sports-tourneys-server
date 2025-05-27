@@ -1,73 +1,92 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# eSports Tourneys Server
 
 ## Description
+Backend API for the eSports Tournaments platform. Built with NestJS, this server handles user authentication, tournament management, invitations, real-time match updates via Socket.IO, and data persistence with TypeORM and PostgreSQL.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
+- **User Management**: Registration, login (JWT), profile updates.
+- **Tournament CRUD**: Create, read, update, delete tournaments.
+- **Invitations**: Invite friends to tournaments via email or direct link.
+- **Bracket Management**: Manage tournament brackets and match assignments.
+- **Real-time Updates**: Socket.IO for live match results and bracket progress.
+- **Email Notifications**: SendGrid integration for invitation and update emails.
+- **Swagger API Docs**: Automatic API documentation at `/api`.
+
+## Tech Stack
+- **Language & Framework**: TypeScript, NestJS
+- **Database**: PostgreSQL via TypeORM
+- **Realtime**: Socket.IO
+- **Authentication**: Passport (JWT)
+- **Email**: @sendgrid/mail
+- **File Storage**: Cloudinary (for any media uploads)
+- **Testing**: Jest, Supertest
+- **API Docs**: @nestjs/swagger
+
+## Prerequisites
+- Node.js >= 18
+- npm or yarn
+- PostgreSQL database
+- Redis (optional, if implementing job queues or caching)
+
+## Environment Variables
+Create a `.env` file in the project root:
+```dotenv
+  STAGE=
+  DB_URL=
+  JWT_SECRET=
+  SENDGRID_KEY=
+  DEV_ENV=
+  PROD_ENV=
+```
 
 ## Installation
 
-```bash
-$ npm install
-```
+1. **Clone the repo**  
+   ```bash
+   git clone <repository-url>
+   cd e-sports-tourneys-server
+   ```
 
-## Running the app
+2. **Install dependencies**  
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-```bash
-# development
-$ npm run start
+## Running the Server
 
-# watch mode
-$ npm run start:dev
+- **Development**  
+  ```bash
+  npm run dev
+  ```
+- **Production**  
+  ```bash
+  npm run build
+  npm start
+  ```
 
-# production mode
-$ npm run start:prod
-```
+## Scripts
 
-## Test
+| Command            | Description                             |
+| ------------------ | --------------------------------------- |
+| `npm run dev`      | Run in watch mode with debug            |
+| `npm run build`    | Compile the application                 |
+| `npm run start:prod` | Start the production build            |
+| `npm run lint`     | Lint & fix code                         |
+| `npm test`         | Run unit tests                          |
+| `npm run test:e2e` | Run end-to-end tests                    |
 
-```bash
-# unit tests
-$ npm run test
 
-# e2e tests
-$ npm run test:e2e
+## API Documentation
+Swagger UI available at `http://localhost:3000/api`
 
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Contributing
+1. Fork the repository  
+2. Create a branch (`git checkout -b feature/your-feature`)  
+3. Commit your changes (`git commit -m 'feat: add your feature'`)  
+4. Push to branch (`git push origin feature/your-feature`)  
+5. Open a Pull Request
 
 ## License
-
-Nest is [MIT licensed](LICENSE).
+This project is licensed under the MIT License.  
