@@ -148,8 +148,8 @@ export class TournamentsService {
       .leftJoinAndSelect('teams.gamesAsTeam1', 'gamesAsTeam1')
       .leftJoinAndSelect('teams.gamesAsTeam2', 'gamesAsTeam2')
       .where('tournament.admin = :userId', { userId: user.id }) // User is an admin
-      .orWhere('tournament.sharedAdmins @> ARRAY[:userId]', { userId: user.id }) // User is in sharedAdmins array
-      .orWhere('tournament.sharedGuests @> ARRAY[:userId]', { userId: user.id }) // User is in sharedGuests array
+      .orWhere('tournament.sharedAdmins @> ARRAY[CAST(:userId AS text)]', { userId: user.id })
+      .orWhere('tournament.sharedGuests @> ARRAY[CAST(:userId AS text)]', { userId: user.id })
       .orderBy('tournament.createdAt', 'DESC')
       .getMany();
 
